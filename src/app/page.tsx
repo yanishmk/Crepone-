@@ -185,17 +185,20 @@ function CategoryCarousel({
   const dragStartX = useRef(0);
   const isDragging = useRef(false);
 
-  const prev = () => setActive((i) => (i - 1 + items.length) % items.length);
-  const next = () => setActive((i) => (i + 1) % items.length);
+  const atStart = active === 0;
+  const atEnd   = active === items.length - 1;
+
+  const prev = () => { if (!atStart) setActive((i) => i - 1); };
+  const next = () => { if (!atEnd)   setActive((i) => i + 1); };
 
   const current = items[active];
 
   return (
-    <section className={`py-12 ${bg}`} id={sectionId}>
+    <section className={`border-t border-[#e5e7eb] py-8 ${bg}`} id={sectionId}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
-        {/* Header — nom + prix de l'item courant se met à jour en live */}
-        <div className="mb-5 flex items-start justify-between gap-4">
+        {/* Header — nom + prix live */}
+        <div className="mb-4 flex items-start justify-between gap-4">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.26em] text-[#d97706]">
               {icon} Nos {title}
@@ -208,7 +211,7 @@ function CategoryCarousel({
           </div>
         </div>
 
-        {/* Stage — overflow-hidden fixe la stabilité mobile */}
+        {/* Stage — overflow-hidden + peek mobile avec min(270px, 78vw) */}
         <div
           className="relative overflow-hidden rounded-3xl"
           style={{ height: 440 }}
@@ -220,8 +223,7 @@ function CategoryCarousel({
             const dx = touchStartX.current - e.changedTouches[0].clientX;
             const dy = touchStartY.current - e.changedTouches[0].clientY;
             if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-              if (dx > 0) next();
-              else prev();
+              if (dx > 0) next(); else prev();
             }
           }}
           onMouseDown={(e) => { isDragging.current = true; dragStartX.current = e.clientX; }}
@@ -229,39 +231,34 @@ function CategoryCarousel({
             if (!isDragging.current) return;
             isDragging.current = false;
             const dx = dragStartX.current - e.clientX;
-            if (Math.abs(dx) > 40) {
-              if (dx > 0) next();
-              else prev();
-            }
+            if (Math.abs(dx) > 40) { if (dx > 0) next(); else prev(); }
           }}
           onMouseLeave={() => { isDragging.current = false; }}
         >
           <div className="absolute inset-0 flex select-none items-center justify-center">
             {items.map((item, i) => {
-              let offset = i - active;
-              if (offset > items.length / 2) offset -= items.length;
-              if (offset < -items.length / 2) offset += items.length;
+              const offset = i - active; // linear (no wrap) since navigation is clamped
               if (Math.abs(offset) > 2) return null;
 
               const isActive = offset === 0;
               const abs = Math.abs(offset);
-              const scale = isActive ? 1 : abs === 1 ? 0.84 : 0.7;
-              const opacity = isActive ? 1 : abs === 1 ? 0.42 : 0.1;
-              const zIndex = 10 - abs * 4;
+              const scale   = isActive ? 1 : abs === 1 ? 0.84 : 0.7;
+              const opacity = isActive ? 1 : abs === 1 ? 0.45 : 0.1;
+              const zIndex  = 10 - abs * 4;
 
               return (
                 <div
                   key={item.id}
                   className="absolute"
                   style={{
-                    /* min(305px, 90vw) = une carte à la fois sur mobile,
-                       coverflow à 305 px sur desktop */
-                    transform: `translateX(calc(${offset} * min(305px, 90vw))) scale(${scale})`,
+                    /* 78vw sur mobile (~294px) → peek ~50px de la carte suivante
+                       270px sur desktop → coverflow */
+                    transform: `translateX(calc(${offset} * min(270px, 78vw))) scale(${scale})`,
                     opacity,
                     zIndex,
-                    width: "min(288px, calc(100vw - 64px))",
+                    width: "min(288px, calc(100vw - 80px))",
                     transition: "transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.38s ease",
-                    boxShadow: isActive ? "0 20px 60px rgba(0,0,0,0.18)" : "none",
+                    boxShadow: isActive ? "0 16px 48px rgba(0,0,0,0.16)" : "none",
                     borderRadius: "1rem",
                   }}
                 >
@@ -278,12 +275,17 @@ function CategoryCarousel({
           </div>
         </div>
 
-        {/* Controls — barre de progression + flèches */}
-        <div className="mt-5 flex items-center gap-3">
+        {/* Controls */}
+        <div className="mt-4 flex items-center gap-3">
           <button
             onClick={prev}
+            disabled={atStart}
             aria-label="Précédent"
-            className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border border-[#e5e7eb] bg-white shadow-sm transition-all hover:scale-105 hover:border-[#141414] active:scale-95"
+            className={`grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border bg-white shadow-sm transition-all active:scale-95 ${
+              atStart
+                ? "cursor-not-allowed border-[#e5e7eb] opacity-30"
+                : "border-[#e5e7eb] hover:scale-105 hover:border-[#141414]"
+            }`}
           >
             ←
           </button>
@@ -300,8 +302,13 @@ function CategoryCarousel({
 
           <button
             onClick={next}
+            disabled={atEnd}
             aria-label="Suivant"
-            className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border border-[#e5e7eb] bg-white shadow-sm transition-all hover:scale-105 hover:border-[#141414] active:scale-95"
+            className={`grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border bg-white shadow-sm transition-all active:scale-95 ${
+              atEnd
+                ? "cursor-not-allowed border-[#e5e7eb] opacity-30"
+                : "border-[#e5e7eb] hover:scale-105 hover:border-[#141414]"
+            }`}
           >
             →
           </button>

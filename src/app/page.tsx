@@ -400,7 +400,7 @@ export default function Home() {
     <main className="min-h-screen">
 
       {/* ── Promo Bar ─────────────────────────────────────────────────────────── */}
-      <div className="overflow-hidden bg-[#141414] py-2 text-xs font-bold text-[#f5c518]">
+      <div className="overflow-hidden bg-[#141414] py-2 text-xs font-bold text-white">
         <div className="flex animate-marquee whitespace-nowrap">
           {[...PROMO_TEXTS, ...PROMO_TEXTS].map((text, i) => (
             <span key={i} className="mx-10 flex-shrink-0">{text}</span>

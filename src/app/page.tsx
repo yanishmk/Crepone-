@@ -472,6 +472,22 @@ export default function Home() {
               <span className="block text-[#f5c518]">dessert signature.</span>
             </h1>
 
+            <div className="relative mx-auto mt-6 flex min-h-[270px] items-end justify-center lg:hidden">
+              <div className="absolute top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-[#f5c518]/20 blur-3xl" />
+              <div className="absolute bottom-3 h-16 w-56 rounded-full bg-black/28 blur-2xl" />
+              <div className="absolute right-0 top-0 z-20 rounded-full border border-[#f5c518]/40 bg-[#141414]/78 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-[#f5c518] shadow-xl backdrop-blur">
+                🏆 Best seller
+              </div>
+              <Image
+                alt="Fraise Cup Strawberry Dubai CrepOne"
+                className="relative z-10 h-auto w-[74%] max-w-[300px] animate-float drop-shadow-[0_28px_40px_rgba(0,0,0,0.42)]"
+                height={480}
+                priority
+                src="/images/strawberry-dubai-cup-cutout.png"
+                width={390}
+              />
+            </div>
+
             <p className="mt-7 max-w-2xl text-lg font-medium leading-8 text-white/82 sm:text-xl">
               Crêpes artisanales, gaufres belges, croffles et milkshakes —
               les saveurs authentiques de CrepOne, maintenant en boutique.
@@ -496,10 +512,10 @@ export default function Home() {
 
           </div>
 
-          <div className="relative flex min-h-[330px] items-end justify-center lg:min-h-[calc(100vh-112px)] lg:justify-end">
+          <div className="relative hidden min-h-[330px] items-end justify-center lg:flex lg:min-h-[calc(100vh-112px)] lg:justify-end">
             <div className="absolute right-0 top-1/2 h-[22rem] w-[22rem] -translate-y-1/2 rounded-full bg-[#f5c518]/20 blur-3xl lg:h-[36rem] lg:w-[36rem]" />
             <div className="absolute bottom-8 h-24 w-80 rounded-full bg-black/28 blur-2xl lg:right-16 lg:w-[34rem]" />
-            <div className="absolute right-4 top-8 z-20 rounded-full border border-[#f5c518]/40 bg-[#141414]/78 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f5c518] shadow-xl backdrop-blur sm:right-16 lg:right-24 lg:top-24">
+            <div className="absolute right-4 top-4 z-20 rounded-full border border-[#f5c518]/40 bg-[#141414]/78 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f5c518] shadow-xl backdrop-blur sm:right-16 lg:right-20 lg:top-16">
               🏆 Best seller
             </div>
             <Image

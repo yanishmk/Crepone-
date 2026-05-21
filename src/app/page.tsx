@@ -108,7 +108,6 @@ const MENU: MenuItem[] = [
 
 function MenuCard({
   item,
-  index,
   onAdd,
 }: {
   item: MenuItem;
@@ -116,20 +115,22 @@ function MenuCard({
   onAdd: () => void;
 }) {
   return (
-    <article
-      className="group flex flex-col overflow-hidden rounded-2xl border border-[#e5e7eb] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#d97706]/30 hover:shadow-2xl"
-      style={{ animationDelay: `${index * 40}ms` }}
-    >
-      <div className="card-media relative aspect-[4/3]">
+    <article className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm">
+      {/* Photo — taller for carousel context */}
+      <div className="card-media relative" style={{ aspectRatio: "4/3" }}>
         <Image
           alt={item.name}
           fill
           className="card-media-inner object-cover"
           src={item.photo}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 640px) calc(100vw - 64px), 288px"
         />
+        {/* Bottom gradient overlay */}
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/60 to-transparent" />
+
+        {/* Badge top-left */}
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
-          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-[#141414] shadow-sm backdrop-blur-sm">
+          <span className="rounded-full bg-white/92 px-3 py-1 text-xs font-black text-[#141414] shadow-sm backdrop-blur-sm">
             {item.badge}
           </span>
           {item.isNew && (
@@ -138,21 +139,22 @@ function MenuCard({
             </span>
           )}
         </div>
-        <div className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-black text-[#141414] shadow-sm backdrop-blur-sm">
+
+        {/* Rating pill top-right */}
+        <div className="absolute right-3 top-3 rounded-full bg-white/92 px-2.5 py-1 text-xs font-black text-[#141414] shadow-sm backdrop-blur-sm">
           👍 {item.rating}
         </div>
       </div>
+
+      {/* Content */}
       <div className="flex flex-1 flex-col p-4">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#d97706]">
-          {item.category}
-        </span>
-        <h3 className="mt-1 text-base font-black leading-tight">{item.name}</h3>
-        <p className="mt-2 flex-1 text-xs leading-5 text-[#4b5563]">{item.description}</p>
+        <h3 className="text-base font-black leading-tight">{item.name}</h3>
+        <p className="mt-1.5 flex-1 text-xs leading-5 text-[#6b7280]">{item.description}</p>
         <div className="mt-4 flex items-center justify-between gap-2">
-          <span className="text-xl font-black">{item.price}</span>
+          <span className="text-xl font-black text-[#141414]">{item.price}</span>
           <button
             onClick={onAdd}
-            className="rounded-full bg-[#141414] px-4 py-2 text-xs font-black text-white transition-all hover:scale-105 hover:bg-[#1e7a45] active:scale-95"
+            className="rounded-full bg-[#141414] px-5 py-2 text-xs font-black text-white transition-all hover:scale-105 hover:bg-[#1e7a45] active:scale-95"
           >
             + Ajouter
           </button>
@@ -179,106 +181,134 @@ function CategoryCarousel({
 }) {
   const [active, setActive] = useState(0);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   const dragStartX = useRef(0);
   const isDragging = useRef(false);
 
   const prev = () => setActive((i) => (i - 1 + items.length) % items.length);
   const next = () => setActive((i) => (i + 1) % items.length);
 
+  const current = items[active];
+
   return (
-    <section className={`overflow-hidden py-14 ${bg}`} id={sectionId}>
+    <section className={`py-12 ${bg}`} id={sectionId}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-8 flex items-end justify-between">
+
+        {/* Header — nom + prix de l'item courant se met à jour en live */}
+        <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-[#d97706]">
-              {icon} Notre sélection
+            <p className="text-[11px] font-black uppercase tracking-[0.26em] text-[#d97706]">
+              {icon} Nos {title}
             </p>
-            <h2 className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">{title}</h2>
+            <h2 className="mt-0.5 text-2xl font-black tracking-tight sm:text-3xl">{title}</h2>
           </div>
-          <span className="tabular-nums text-sm font-bold text-[#4b5563]">
-            {active + 1} <span className="text-[#d1d5db]">/</span> {items.length}
-          </span>
+          <div className="flex-shrink-0 text-right">
+            <p className="max-w-[170px] truncate text-sm font-bold text-[#4b5563]">{current.name}</p>
+            <p className="text-xl font-black text-[#d97706]">{current.price}</p>
+          </div>
         </div>
 
+        {/* Stage — overflow-hidden fixe la stabilité mobile */}
         <div
-          className="relative flex h-[500px] select-none items-center justify-center"
-          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+          className="relative overflow-hidden rounded-3xl"
+          style={{ height: 440 }}
+          onTouchStart={(e) => {
+            touchStartX.current = e.touches[0].clientX;
+            touchStartY.current = e.touches[0].clientY;
+          }}
           onTouchEnd={(e) => {
-            const diff = touchStartX.current - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
+            const dx = touchStartX.current - e.changedTouches[0].clientX;
+            const dy = touchStartY.current - e.changedTouches[0].clientY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+              if (dx > 0) next();
+              else prev();
+            }
           }}
           onMouseDown={(e) => { isDragging.current = true; dragStartX.current = e.clientX; }}
           onMouseUp={(e) => {
             if (!isDragging.current) return;
             isDragging.current = false;
-            const diff = dragStartX.current - e.clientX;
-            if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
+            const dx = dragStartX.current - e.clientX;
+            if (Math.abs(dx) > 40) {
+              if (dx > 0) next();
+              else prev();
+            }
           }}
           onMouseLeave={() => { isDragging.current = false; }}
         >
-          {items.map((item, i) => {
-            let offset = i - active;
-            if (offset > items.length / 2) offset -= items.length;
-            if (offset < -items.length / 2) offset += items.length;
-            if (Math.abs(offset) > 2) return null;
+          <div className="absolute inset-0 flex select-none items-center justify-center">
+            {items.map((item, i) => {
+              let offset = i - active;
+              if (offset > items.length / 2) offset -= items.length;
+              if (offset < -items.length / 2) offset += items.length;
+              if (Math.abs(offset) > 2) return null;
 
-            const isActive = offset === 0;
-            const abs = Math.abs(offset);
-            const scale = isActive ? 1 : abs === 1 ? 0.78 : 0.62;
-            const opacity = isActive ? 1 : abs === 1 ? 0.55 : 0.22;
-            const translateX = offset * 295;
-            const zIndex = 10 - abs * 4;
+              const isActive = offset === 0;
+              const abs = Math.abs(offset);
+              const scale = isActive ? 1 : abs === 1 ? 0.84 : 0.7;
+              const opacity = isActive ? 1 : abs === 1 ? 0.42 : 0.1;
+              const zIndex = 10 - abs * 4;
 
-            return (
-              <div
-                key={item.id}
-                className="absolute w-72"
-                style={{
-                  transform: `translateX(${translateX}px) scale(${scale})`,
-                  opacity,
-                  zIndex,
-                  transition: "transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.42s ease",
-                }}
-              >
-                {!isActive && (
-                  <div
-                    className="absolute inset-0 z-50 cursor-pointer"
-                    onClick={() => setActive(i)}
-                  />
-                )}
-                <MenuCard item={item} index={i} onAdd={onAdd} />
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={item.id}
+                  className="absolute"
+                  style={{
+                    /* min(305px, 90vw) = une carte à la fois sur mobile,
+                       coverflow à 305 px sur desktop */
+                    transform: `translateX(calc(${offset} * min(305px, 90vw))) scale(${scale})`,
+                    opacity,
+                    zIndex,
+                    width: "min(288px, calc(100vw - 64px))",
+                    transition: "transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.38s ease",
+                    boxShadow: isActive ? "0 20px 60px rgba(0,0,0,0.18)" : "none",
+                    borderRadius: "1rem",
+                  }}
+                >
+                  {!isActive && (
+                    <div
+                      className="absolute inset-0 z-50 cursor-pointer"
+                      onClick={() => setActive(i)}
+                    />
+                  )}
+                  <MenuCard item={item} index={i} onAdd={onAdd} />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="mt-2 flex items-center justify-center gap-5">
+        {/* Controls — barre de progression + flèches */}
+        <div className="mt-5 flex items-center gap-3">
           <button
             onClick={prev}
             aria-label="Précédent"
-            className="grid h-10 w-10 place-items-center rounded-full border border-[#e5e7eb] bg-white text-[#141414] shadow-sm transition-all hover:scale-105 hover:border-[#141414] active:scale-95"
+            className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border border-[#e5e7eb] bg-white shadow-sm transition-all hover:scale-105 hover:border-[#141414] active:scale-95"
           >
             ←
           </button>
-          <div className="flex items-center gap-2">
-            {items.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActive(i)}
-                aria-label={`Item ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${
-                  i === active ? "h-2 w-6 bg-[#141414]" : "h-2 w-2 bg-[#d1d5db] hover:bg-[#d97706]"
-                }`}
-              />
-            ))}
+
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#e5e7eb]">
+            <div
+              className="h-1.5 rounded-full bg-[#141414]"
+              style={{
+                width: `${((active + 1) / items.length) * 100}%`,
+                transition: "width 0.32s cubic-bezier(0.25,0.46,0.45,0.94)",
+              }}
+            />
           </div>
+
           <button
             onClick={next}
             aria-label="Suivant"
-            className="grid h-10 w-10 place-items-center rounded-full border border-[#e5e7eb] bg-white text-[#141414] shadow-sm transition-all hover:scale-105 hover:border-[#141414] active:scale-95"
+            className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border border-[#e5e7eb] bg-white shadow-sm transition-all hover:scale-105 hover:border-[#141414] active:scale-95"
           >
             →
           </button>
+
+          <span className="flex-shrink-0 tabular-nums text-xs font-bold text-[#9ca3af]">
+            {active + 1}/{items.length}
+          </span>
         </div>
       </div>
     </section>

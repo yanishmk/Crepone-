@@ -55,10 +55,16 @@ html { scroll-behavior: smooth; }
 ::-webkit-scrollbar-thumb:hover { background: #166534; }
 
 body {
-  background: var(--background);
+  background: linear-gradient(135deg, #123a33 0%, #145247 38%, #2b7664 58%, #d9bd61 100%);
+  background-attachment: fixed;
+  background-size: cover;
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* Hide scrollbar on category nav */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Card image zoom on hover */
 .card-media {

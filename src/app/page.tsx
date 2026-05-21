@@ -168,14 +168,12 @@ function CategoryCarousel({
   sectionId,
   title,
   icon,
-  bg,
   items,
   onAdd,
 }: {
   sectionId: string;
   title: string;
   icon: string;
-  bg: string;
   items: MenuItem[];
   onAdd: () => void;
 }) {
@@ -208,20 +206,20 @@ function CategoryCarousel({
   const current = items[active];
 
   return (
-    <section className={`border-t border-[#e5e7eb] py-8 ${bg}`} id={sectionId}>
+    <section className="border-t border-white/10 py-8" id={sectionId}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
         {/* Header — nom + prix live */}
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.26em] text-[#d97706]">
+            <p className="text-[11px] font-black uppercase tracking-[0.26em] text-[#f5c518]">
               {icon} Nos {title}
             </p>
-            <h2 className="mt-0.5 text-2xl font-black tracking-tight sm:text-3xl">{title}</h2>
+            <h2 className="mt-0.5 text-2xl font-black tracking-tight text-white sm:text-3xl">{title}</h2>
           </div>
           <div className="flex-shrink-0 text-right">
-            <p className="max-w-[170px] truncate text-sm font-bold text-[#4b5563]">{current.name}</p>
-            <p className="text-xl font-black text-[#d97706]">{current.price}</p>
+            <p className="max-w-[170px] truncate text-sm font-bold text-white/60">{current.name}</p>
+            <p className="text-xl font-black text-[#f5c518]">{current.price}</p>
           </div>
         </div>
 
@@ -296,18 +294,18 @@ function CategoryCarousel({
             onClick={prev}
             disabled={atStart}
             aria-label="Précédent"
-            className={`grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border bg-white shadow-sm transition-all active:scale-95 ${
+            className={`grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border text-white transition-all active:scale-95 ${
               atStart
-                ? "cursor-not-allowed border-[#e5e7eb] opacity-30"
-                : "border-[#e5e7eb] hover:scale-105 hover:border-[#141414]"
+                ? "cursor-not-allowed border-white/15 bg-white/5 opacity-30"
+                : "border-white/25 bg-white/10 hover:scale-105 hover:border-white/60"
             }`}
           >
             ←
           </button>
 
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#e5e7eb]">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/15">
             <div
-              className="h-1.5 rounded-full bg-[#141414]"
+              className="h-1.5 rounded-full bg-[#f5c518]"
               style={{
                 width: `${((active + 1) / items.length) * 100}%`,
                 transition: "width 0.32s cubic-bezier(0.25,0.46,0.45,0.94)",
@@ -319,16 +317,16 @@ function CategoryCarousel({
             onClick={next}
             disabled={atEnd}
             aria-label="Suivant"
-            className={`grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border bg-white shadow-sm transition-all active:scale-95 ${
+            className={`grid h-10 w-10 flex-shrink-0 place-items-center rounded-full border text-white transition-all active:scale-95 ${
               atEnd
-                ? "cursor-not-allowed border-[#e5e7eb] opacity-30"
-                : "border-[#e5e7eb] hover:scale-105 hover:border-[#141414]"
+                ? "cursor-not-allowed border-white/15 bg-white/5 opacity-30"
+                : "border-white/25 bg-white/10 hover:scale-105 hover:border-white/60"
             }`}
           >
             →
           </button>
 
-          <span className="flex-shrink-0 tabular-nums text-xs font-bold text-[#9ca3af]">
+          <span className="flex-shrink-0 tabular-nums text-xs font-bold text-white/40">
             {active + 1}/{items.length}
           </span>
         </div>
@@ -363,12 +361,43 @@ function FacebookIcon() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+const CATEGORY_LINKS = [
+  { id: "crepes",     label: "Crêpes",     icon: "🥞" },
+  { id: "gaufres",    label: "Gaufres",    icon: "🧇" },
+  { id: "croffles",   label: "Croffles",   icon: "🥐" },
+  { id: "poffs",      label: "Poff's",     icon: "🫧" },
+  { id: "milkshakes", label: "Milkshakes", icon: "🥤" },
+  { id: "fraisecup",  label: "Fraise Cup", icon: "🍓" },
+];
+
+function CategoryNav() {
+  return (
+    <div className="sticky top-[72px] z-40 border-b border-white/10 bg-[#0a2018]/80 backdrop-blur-xl">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="scrollbar-none flex gap-1 overflow-x-auto py-2.5">
+          {CATEGORY_LINKS.map(({ id, label, icon }) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              className="flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-black text-white/65 transition-all hover:bg-white/12 hover:text-white"
+            >
+              {icon} {label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function Home() {
   const [cartCount, setCartCount] = useState(0);
   const addToCart = () => setCartCount((n) => n + 1);
 
   return (
-    <main className="min-h-screen bg-[#fafaf8] text-[#141414]">
+    <main className="min-h-screen text-white">
 
       {/* ── Promo Bar ─────────────────────────────────────────────────────────── */}
       <div className="overflow-hidden bg-[#141414] py-2 text-xs font-bold text-[#f5c518]">
@@ -380,24 +409,23 @@ export default function Home() {
       </div>
 
       {/* ── Header ────────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#fafaf8]/95 shadow-sm backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0a2018]/85 shadow-sm backdrop-blur-xl">
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
           <a className="flex items-center gap-3" href="#">
-            <div className="flex h-[58px] w-[58px] items-center justify-center overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-[#e5e7eb]">
+            <div className="flex h-[58px] w-[58px] items-center justify-center overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-white/10">
               <Image alt="CrepOne logo" className="h-full w-full object-cover" height={58} src={LOGO_URL} width={58} />
             </div>
             <div>
-              <span className="block text-2xl font-black leading-none tracking-tight">CrepOne</span>
+              <span className="block text-2xl font-black leading-none tracking-tight text-white">CrepOne</span>
             </div>
           </a>
 
-          <nav className="hidden items-center gap-7 text-sm font-bold text-[#4b5563] md:flex">
-            <a href="#signature"  className="transition-colors hover:text-[#d97706]">Signature</a>
-            <a href="#crepes"     className="transition-colors hover:text-[#d97706]">Crêpes</a>
-            <a href="#gaufres"    className="transition-colors hover:text-[#d97706]">Gaufres</a>
-            <a href="#milkshakes" className="transition-colors hover:text-[#d97706]">Milkshakes</a>
-            <a href="#reviews"    className="transition-colors hover:text-[#d97706]">Avis</a>
-            <a href="#visit"      className="transition-colors hover:text-[#d97706]">Visiter</a>
+          <nav className="hidden items-center gap-7 text-sm font-bold text-white/65 md:flex">
+            <a href="#crepes"     className="transition-colors hover:text-[#f5c518]">Crêpes</a>
+            <a href="#gaufres"    className="transition-colors hover:text-[#f5c518]">Gaufres</a>
+            <a href="#milkshakes" className="transition-colors hover:text-[#f5c518]">Milkshakes</a>
+            <a href="#reviews"    className="transition-colors hover:text-[#f5c518]">Avis</a>
+            <a href="#visit"      className="transition-colors hover:text-[#f5c518]">Visiter</a>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -425,89 +453,28 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ── Hero ──────────────────────────────────────────────────────────────── */}
-      <section
-        className="relative overflow-hidden bg-[linear-gradient(135deg,#123a33_0%,#145247_38%,#2b7664_58%,#d9bd61_100%)] px-4 py-12 text-white sm:px-6 lg:min-h-[calc(100vh-112px)] lg:py-0"
-        id="signature"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(245,197,24,0.18),transparent_24rem)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_45%,rgba(245,197,24,0.22),transparent_28rem)]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#123a33] via-[#174f49]/86 to-[#123a33]/6" />
-        <div className="pointer-events-none absolute bottom-0 right-[6%] hidden h-48 w-[34rem] rounded-full bg-black/24 blur-2xl lg:block" />
-
-        <div className="relative mx-auto grid max-w-7xl items-center gap-8 lg:min-h-[calc(100vh-112px)] lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="max-w-3xl animate-slide-up py-8 lg:py-0">
-            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#f5c518]/40 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#f5c518] backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-[#f5c518]" />
-              Boutique dessert à Gatineau
-            </p>
-
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[7.4rem] xl:text-[8.2rem]">
-              CrepOne,{" "}
-              <span className="block text-[#f5c518]">dessert signature.</span>
-            </h1>
-
-            <p className="mt-7 max-w-2xl text-lg font-medium leading-8 text-white/82 sm:text-xl">
-              Crêpes artisanales, gaufres belges, croffles et milkshakes —
-              les saveurs authentiques de CrepOne, maintenant en boutique.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href={ORDER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-[52px] items-center gap-2 rounded-full bg-[#1e7a45] px-8 py-4 text-sm font-black text-white shadow-xl shadow-[#0a241c]/25 transition-all hover:scale-105 hover:bg-[#196638]"
-              >
-                Commander sur Uber Eats
-              </a>
-              <a
-                href="#menu"
-                className="inline-flex min-h-[52px] items-center gap-2 rounded-full border border-white/24 bg-white/10 px-8 py-4 text-sm font-black text-white backdrop-blur transition-all hover:scale-105 hover:bg-white/16"
-              >
-                Voir le menu →
-              </a>
-            </div>
-
-          </div>
-
-          <div className="relative flex min-h-[330px] items-end justify-center lg:min-h-[calc(100vh-112px)] lg:justify-end">
-            <div className="absolute right-0 top-1/2 h-[22rem] w-[22rem] -translate-y-1/2 rounded-full bg-[#f5c518]/20 blur-3xl lg:h-[36rem] lg:w-[36rem]" />
-            <div className="absolute bottom-8 h-24 w-80 rounded-full bg-black/28 blur-2xl lg:right-16 lg:w-[34rem]" />
-            <Image
-              alt="Fraise Cup Strawberry Dubai CrepOne"
-              className="relative z-10 h-auto w-[76%] max-w-[390px] animate-float drop-shadow-[0_34px_48px_rgba(0,0,0,0.46)] lg:w-[78%] lg:max-w-[640px]"
-              height={760}
-              priority
-              src="/images/strawberry-dubai-cup-cutout.png"
-              width={620}
-            />
-          </div>
-        </div>
-      </section>
+      <CategoryNav />
 
       {/* ── Reviews ──────────────────────────────────────────────────────────── */}
-      <section className="overflow-hidden border-y border-[#e5e7eb] bg-white py-8" id="reviews">
+      <section className="overflow-hidden border-b border-white/10 bg-black/20 py-8 backdrop-blur-sm" id="reviews">
         {/* Header */}
         <div className="mx-auto mb-5 flex max-w-7xl items-center justify-between px-4 sm:px-6">
           <div>
-            <h2 className="text-xl font-black tracking-tight">Ce que disent nos clients</h2>
+            <h2 className="text-xl font-black tracking-tight text-white">Ce que disent nos clients</h2>
           </div>
-          <div className="flex items-center gap-2 rounded-full border border-[#e5e7eb] bg-[#fafaf8] px-4 py-2">
+          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2">
             <GoogleIcon />
-            <span className="font-black text-[#141414]">4.7</span>
+            <span className="font-black text-white">4.7</span>
             <div className="flex text-[#fbbf24]">
               {[1,2,3,4].map((s) => <span key={s}>★</span>)}
-              <span className="text-[#d1d5db]">★</span>
+              <span className="text-white/30">★</span>
             </div>
-            <span className="hidden text-xs font-bold text-[#4b5563] sm:inline">Google Maps</span>
+            <span className="hidden text-xs font-bold text-white/55 sm:inline">Google Maps</span>
           </div>
         </div>
 
-        {/* Single masked marquee */}
+        {/* Marquee */}
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-white to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-white to-transparent" />
           <div className="flex animate-marquee gap-4 whitespace-nowrap" style={{ animationDuration: "55s" }}>
             {[...REVIEWS, ...REVIEWS].map((r, i) => (
               <ReviewCard key={i} review={r} />
@@ -518,44 +485,43 @@ export default function Home() {
 
       {/* ── Category Carousels ────────────────────────────────────────────────── */}
       {([
-        { sectionId: "crepes",     label: "Crêpes",     icon: "🥞", cat: "Crêpes",     bg: "bg-[#fafaf8]" },
-        { sectionId: "gaufres",    label: "Gaufres",    icon: "🧇", cat: "Gaufres",    bg: "bg-white"    },
-        { sectionId: "croffles",   label: "Croffles",   icon: "🥐", cat: "Croffles",   bg: "bg-[#fafaf8]" },
-        { sectionId: "poffs",      label: "Poff's",     icon: "🫧", cat: "Poff's",     bg: "bg-white"    },
-        { sectionId: "milkshakes", label: "Milkshakes", icon: "🥤", cat: "Milkshakes", bg: "bg-[#fafaf8]" },
-        { sectionId: "fraisecup",  label: "Fraise Cup", icon: "🍓", cat: "Fraise Cup", bg: "bg-white"    },
-      ] as const).map(({ sectionId, label, icon, cat, bg }) => (
+        { sectionId: "crepes",     label: "Crêpes",     icon: "🥞", cat: "Crêpes"     },
+        { sectionId: "gaufres",    label: "Gaufres",    icon: "🧇", cat: "Gaufres"    },
+        { sectionId: "croffles",   label: "Croffles",   icon: "🥐", cat: "Croffles"   },
+        { sectionId: "poffs",      label: "Poff's",     icon: "🫧", cat: "Poff's"     },
+        { sectionId: "milkshakes", label: "Milkshakes", icon: "🥤", cat: "Milkshakes" },
+        { sectionId: "fraisecup",  label: "Fraise Cup", icon: "🍓", cat: "Fraise Cup" },
+      ] as const).map(({ sectionId, label, icon, cat }) => (
         <CategoryCarousel
           key={cat}
           sectionId={sectionId}
           title={label}
           icon={icon}
-          bg={bg}
           items={MENU.filter((m) => m.category === cat)}
           onAdd={addToCart}
         />
       ))}
 
       {/* ── Location CTA ──────────────────────────────────────────────────────── */}
-      <section className="px-4 py-16 sm:px-6" id="visit">
+      <section className="border-t border-white/10 px-4 py-16 sm:px-6" id="visit">
         <div className="mx-auto max-w-7xl">
-          <div className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#fef9c3] to-[#fafaf8] p-8 sm:p-12 lg:flex lg:items-center lg:justify-between lg:gap-10">
+          <div className="overflow-hidden rounded-[2rem] border border-white/15 bg-black/20 p-8 backdrop-blur-sm sm:p-12 lg:flex lg:items-center lg:justify-between lg:gap-10">
             <div className="flex-1">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-[#4b5563]">
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/55">
                 Viens nous voir
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">CrepOne à Gatineau</h2>
-              <p className="mt-4 max-w-lg leading-7 text-[#4b5563]">
+              <h2 className="mt-3 text-4xl font-black tracking-tight text-white">CrepOne à Gatineau</h2>
+              <p className="mt-4 max-w-lg leading-7 text-white/70">
                 668 Boulevard Saint-Joseph, Gatineau, QC J8Y 4B4
                 <br />
-                Ouvert <strong>18h – 23h45</strong> · Tous les jours
+                Ouvert <strong className="text-white">18h – 23h45</strong> · Tous les jours
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href={ORDER_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center gap-2 rounded-full bg-[#1e7a45] px-7 text-sm font-black text-white shadow-lg shadow-[#1e7a45]/25 transition-all hover:scale-105 hover:bg-[#196638]"
+                  className="inline-flex h-12 items-center gap-2 rounded-full bg-[#1e7a45] px-7 text-sm font-black text-white shadow-lg shadow-black/25 transition-all hover:scale-105 hover:bg-[#196638]"
                 >
                   Commander maintenant
                 </a>
@@ -563,15 +529,15 @@ export default function Home() {
                   href="https://maps.google.com/?q=668+Boulevard+Saint-Joseph+Gatineau+QC"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-[#e5e7eb] bg-white px-7 text-sm font-black text-[#141414] transition-colors hover:border-[#d97706]"
+                  className="inline-flex h-12 items-center gap-2 rounded-full border border-white/25 bg-white/10 px-7 text-sm font-black text-white transition-all hover:border-white/50 hover:bg-white/15"
                 >
                   📍 Google Maps
                 </a>
               </div>
             </div>
-            <div className="mt-8 flex-shrink-0 rounded-3xl bg-white/70 p-6 shadow-xl lg:mt-0">
-              <p className="text-5xl font-black text-[#d97706]">4.7★</p>
-              <p className="mt-2 text-sm font-black uppercase tracking-[0.18em] text-[#4b5563]">
+            <div className="mt-8 flex-shrink-0 rounded-3xl border border-white/15 bg-white/8 p-6 backdrop-blur lg:mt-0">
+              <p className="text-5xl font-black text-[#f5c518]">4.7★</p>
+              <p className="mt-2 text-sm font-black uppercase tracking-[0.18em] text-white/55">
                 Google Maps
               </p>
             </div>
@@ -580,7 +546,7 @@ export default function Home() {
       </section>
 
       {/* ── Footer ────────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-[#e5e7eb] bg-[#141414] px-4 py-10 sm:px-6">
+      <footer className="border-t border-white/10 bg-[#071510]/90 px-4 py-10 sm:px-6">
         <div className="mx-auto max-w-7xl">
 
           {/* Top row */}
@@ -601,7 +567,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               {/* Instagram */}
               <a
-                href="https://www.instagram.com/crepone_/"
+                href="https://www.instagram.com/crep_one/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram CrepOne"
@@ -612,7 +578,7 @@ export default function Home() {
 
               {/* TikTok */}
               <a
-                href="https://www.tiktok.com/@crepone"
+                href="https://www.tiktok.com/@crepone7"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok CrepOne"
@@ -623,7 +589,7 @@ export default function Home() {
 
               {/* Facebook */}
               <a
-                href="https://www.facebook.com/crepone"
+                href="https://www.facebook.com/p/CrepOne-61566200200895/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook CrepOne"

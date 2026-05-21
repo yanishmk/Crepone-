@@ -457,7 +457,7 @@ export default function Home() {
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section
-        className="relative overflow-hidden bg-[linear-gradient(135deg,#123a33_0%,#145247_38%,#2b7664_58%,#d9bd61_100%)] px-4 py-12 text-white sm:px-6 lg:min-h-[calc(100vh-112px)] lg:py-0"
+        className="relative overflow-hidden bg-[linear-gradient(135deg,#123a33_0%,#145247_38%,#2b7664_58%,#d9bd61_100%)] px-4 py-8 text-white sm:px-6 lg:min-h-[calc(100vh-112px)] lg:py-0"
         id="signature"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(245,197,24,0.18),transparent_24rem)]" />
@@ -466,13 +466,13 @@ export default function Home() {
         <div className="pointer-events-none absolute bottom-0 right-[6%] hidden h-48 w-[34rem] rounded-full bg-black/24 blur-2xl lg:block" />
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-8 lg:min-h-[calc(100vh-112px)] lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="max-w-3xl animate-slide-up py-8 lg:py-0">
+          <div className="max-w-3xl animate-slide-up py-3 lg:py-0">
             <h1 className="max-w-4xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[7.4rem] xl:text-[8.2rem]">
-              CrepOne,{" "}
-              <span className="block text-[#f5c518]">dessert signature.</span>
+              Dessert{" "}
+              <span className="block text-[#f5c518]">signature.</span>
             </h1>
 
-            <div className="relative mx-auto mt-6 flex min-h-[270px] items-end justify-center lg:hidden">
+            <div className="relative mx-auto mt-3 flex min-h-[260px] items-end justify-center lg:hidden">
               <div className="absolute top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-[#f5c518]/20 blur-3xl" />
               <div className="absolute bottom-3 h-16 w-56 rounded-full bg-black/28 blur-2xl" />
               <div className="absolute right-0 top-0 z-20 rounded-full border border-[#f5c518]/40 bg-[#141414]/78 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-[#f5c518] shadow-xl backdrop-blur">

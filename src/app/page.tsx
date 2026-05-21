@@ -379,7 +379,7 @@ function CategoryNav() {
             <a
               key={id}
               href={`#${id}`}
-              className="flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-black text-white/65 transition-all hover:bg-white/12 hover:text-white"
+              className="flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-black text-white transition-all hover:bg-white/12"
             >
               {icon} {label}
             </a>

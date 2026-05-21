@@ -467,11 +467,6 @@ export default function Home() {
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-8 lg:min-h-[calc(100vh-112px)] lg:grid-cols-[0.9fr_1.1fr]">
           <div className="max-w-3xl animate-slide-up py-8 lg:py-0">
-            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#f5c518]/40 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#f5c518] backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-[#f5c518]" />
-              Boutique dessert à Gatineau
-            </p>
-
             <h1 className="max-w-4xl text-5xl font-black leading-[0.92] tracking-tight sm:text-7xl lg:text-[7.4rem] xl:text-[8.2rem]">
               CrepOne,{" "}
               <span className="block text-[#f5c518]">dessert signature.</span>
@@ -504,6 +499,9 @@ export default function Home() {
           <div className="relative flex min-h-[330px] items-end justify-center lg:min-h-[calc(100vh-112px)] lg:justify-end">
             <div className="absolute right-0 top-1/2 h-[22rem] w-[22rem] -translate-y-1/2 rounded-full bg-[#f5c518]/20 blur-3xl lg:h-[36rem] lg:w-[36rem]" />
             <div className="absolute bottom-8 h-24 w-80 rounded-full bg-black/28 blur-2xl lg:right-16 lg:w-[34rem]" />
+            <div className="absolute right-4 top-8 z-20 rounded-full border border-[#f5c518]/40 bg-[#141414]/78 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#f5c518] shadow-xl backdrop-blur sm:right-16 lg:right-24 lg:top-24">
+              🏆 Best seller
+            </div>
             <Image
               alt="Fraise Cup Strawberry Dubai CrepOne"
               className="relative z-10 h-auto w-[76%] max-w-[390px] animate-float drop-shadow-[0_34px_48px_rgba(0,0,0,0.46)] lg:w-[78%] lg:max-w-[640px]"

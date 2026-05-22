@@ -47,63 +47,59 @@ type MenuItem = {
 };
 
 const MENU: MenuItem[] = [
-  // ── Crêpes ──────────────────────────────────────────────────────────────────
-  { id: 1,  category: "Crêpes",  name: "Crêpe Nutella",         price: "$9.99",  badge: "💛 Classique", rating: "88%", reviews: 24, description: "Nutella fondant sur crêpe moelleuse et dorée.", photo: "/images/crepe_nutella.jpg" },
-  { id: 2,  category: "Crêpes",  name: "Crêpe Fraise",          price: "$12.99", badge: "🍓 Frais",     rating: "86%", reviews: 18, description: "Fraises fraîches, chocolat et chantilly maison.", photo: "/images/crepe_strawberry_dubai.jpg" },
-  { id: 3,  category: "Crêpes",  name: "Crêpe Banane",          price: "$12.99", badge: "🍌 Fruité",    rating: "84%", reviews: 12, description: "Banane fraîche, Nutella et noisettes concassées.", photo: "/images/crepe_nutella.jpg" },
-  { id: 4,  category: "Crêpes",  name: "Crêpe Oreo",            price: "$13.99", badge: "🖤 Crunch",    rating: "84%", reviews: 19, description: "Miettes d'Oreo, crème vanille et chocolat fondu.", photo: "/images/crepe_oreo.jpg" },
-  { id: 5,  category: "Crêpes",  name: "Crêpe Lotus",           price: "$13.99", badge: "🌟 Fan fav",   rating: "90%", reviews: 10, isFeatured: true, description: "Pâte Lotus Biscoff et miettes de biscuit caramel.", photo: "/images/crepe_lotus.jpg" },
-  { id: 6,  category: "Crêpes",  name: "Crêpe Halawa",          price: "$14.99", badge: "✨ Exotique",  rating: "87%", reviews: 8,  description: "Crème halawa onctueuse et pistaches fraîches.", photo: "/images/crepe_pistachio.jpg" },
-  { id: 7,  category: "Crêpes",  name: "Crêpe Pistache",        price: "$14.99", badge: "💚 Nouveau",   rating: "100%", reviews: 8, isNew: true, description: "Crème pistache riche et pistaches concassées.", photo: "/images/crepe_pistachio.jpg" },
-  { id: 8,  category: "Crêpes",  name: "Crêpe Bueno",           price: "$14.99", badge: "💎 Signature", rating: "85%", reviews: 12, description: "Kinder Bueno, chocolat au lait et chantilly.", photo: "/images/crepe_bueno.jpg" },
-  { id: 9,  category: "Crêpes",  name: "Crêpe Gourmande",       price: "$15.99", badge: "👑 Chef",      rating: "92%", reviews: 15, description: "M&Ms, chocolat, chantilly et fruits frais.", photo: "/images/crepe_bueno.jpg" },
-  { id: 10, category: "Crêpes",  name: "Crêpe Fruité",          price: "$15.99", badge: "🍉 Saison",    rating: "89%", reviews: 11, description: "Fruits frais de saison et coulis maison.", photo: "/images/crepe_strawberry_dubai.jpg" },
-  { id: 11, category: "Crêpes",  name: "Crêpe Dubai",           price: "$15.99", badge: "⭐ Populaire", rating: "100%", reviews: 9, isFeatured: true, description: "Crème pistache, kadaifi croustillant et chocolat belge.", photo: "/images/crepe_dubai.jpg" },
+  // ── Crêpes Classiques ────────────────────────────────────────────────────────
+  { id: 1,  category: "Crêpes Classiques",     name: "Crêpe classique Nutella",          price: "$9.99",  badge: "💛 Classique", rating: "84%",  reviews: 13, description: "L'intensité du Nutella fondant sur une crêpe moelleuse et dorée.", photo: "/images/crepe_nutella.jpg" },
+  { id: 2,  category: "Crêpes Classiques",     name: "Crêpe classique Nutella & Fraise", price: "$13.99", badge: "🍓 Duo",       rating: "86%",  reviews: 18, description: "Fraises fraîches et Nutella fondant sur crêpe moelleuse et dorée.", photo: "/images/crepe_strawberry_dubai.jpg" },
+  { id: 3,  category: "Crêpes Classiques",     name: "Crêpe classique Oreo",             price: "$19.99", badge: "🖤 Crunch",    rating: "84%",  reviews: 19, description: "Miettes d'Oreo, crème vanille et chocolat fondu.", photo: "/images/crepe_oreo.jpg" },
+  { id: 4,  category: "Crêpes Classiques",     name: "Crêpe classique Lotus",            price: "$19.99", badge: "🌟 Fan fav",   rating: "90%",  reviews: 10, isFeatured: true, description: "Pâte Lotus Biscoff et miettes de biscuit caramel.", photo: "/images/crepe_lotus.jpg" },
+  { id: 5,  category: "Crêpes Classiques",     name: "Crêpe classique Bueno",            price: "$15.99", badge: "💎 Signature", rating: "75%",  reviews: 12, description: "Kinder Bueno, chocolat au lait et chantilly.", photo: "/images/crepe_bueno.jpg" },
+  { id: 6,  category: "Crêpes Classiques",     name: "Crêpe classique Pistache",         price: "$15.99", badge: "💚 Nouveau",   rating: "100%", reviews: 8,  isNew: true, description: "Crème pistache riche et pistaches concassées.", photo: "/images/crepe_pistachio.jpg" },
+  { id: 7,  category: "Crêpes Classiques",     name: "Crêpe classique Dubai",            price: "$15.99", badge: "⭐ Populaire", rating: "100%", reviews: 9,  isFeatured: true, description: "Crème pistache, kadaifi croustillant et chocolat belge.", photo: "/images/crepe_dubai.jpg" },
+  { id: 8,  category: "Crêpes Classiques",     name: "Crêpe fruité",                     price: "$15.99", badge: "🍉 Saison",    rating: "70%",  reviews: 10, description: "Fruits frais de saison et coulis maison.", photo: "/images/crepe_strawberry_dubai.jpg" },
+
+  // ── Crêpes Croustillantes ────────────────────────────────────────────────────
+  { id: 9,  category: "Crêpes Croustillantes", name: "Crêpe croustillante Dubai",        price: "$15.99", badge: "⭐ #1 Vendu",  rating: "100%", reviews: 9,  isFeatured: true, description: "Crêpe croustillante garnie de crème pistache, kadaifi et chocolat belge façon Dubai.", photo: "/images/crepe_dubai.jpg" },
+  { id: 10, category: "Crêpes Croustillantes", name: "Crêpe croustillante Pistache",     price: "$15.99", badge: "💚 Pistache",  rating: "88%",  reviews: 6,  description: "Crêpe croustillante garnie de crème pistache et pistaches concassées.", photo: "/images/crepe_pistachio.jpg" },
+  { id: 11, category: "Crêpes Croustillantes", name: "Crêpe croustillante Gourmandes",   price: "$19.99", badge: "👑 Premium",   rating: "66%",  reviews: 3,  description: "Crêpe croustillante généreusement garnie de toppings gourmands.", photo: "/images/crepe_bueno.jpg" },
 
   // ── Gaufres ─────────────────────────────────────────────────────────────────
-  { id: 12, category: "Gaufres", name: "Gaufre Nutella",        price: "$12.99", badge: "💛 Classique", rating: "86%", reviews: 20, description: "Gaufre croustillante garnie de Nutella et banane.", photo: "/images/waffle_nutella.jpg" },
-  { id: 13, category: "Gaufres", name: "Gaufre Mordjene",       price: "$11.99", badge: "🌾 Maison",    rating: "88%", reviews: 14, description: "Gaufre à la crème Mordjene et amandes grillées.", photo: "/images/waffle_strawberry.jpg" },
-  { id: 14, category: "Gaufres", name: "Gaufre Fraise",         price: "$12.99", badge: "🍓 Frais",     rating: "88%", reviews: 15, description: "Gaufre dorée, fraises fraîches et coulis maison.", photo: "/images/waffle_strawberry.jpg" },
-  { id: 15, category: "Gaufres", name: "Gaufre Banane",         price: "$13.99", badge: "🍌 Fruité",    rating: "84%", reviews: 10, description: "Gaufre chaude, banane et sirop de caramel.", photo: "/images/waffle_nutella.jpg" },
-  { id: 16, category: "Gaufres", name: "Gaufre Oreo",           price: "$13.99", badge: "🖤 Crunch",    rating: "84%", reviews: 19, isFeatured: true, description: "Gaufre croustillante, Oreo, crème vanille et sucre glace.", photo: "/images/waffle_oreo.jpg" },
-  { id: 17, category: "Gaufres", name: "Gaufre Lotus",          price: "$13.99", badge: "🌟 Fan fav",   rating: "90%", reviews: 18, description: "Lotus Biscoff, caramel et crumble de biscuit.", photo: "/images/waffle_lotus.jpg" },
-  { id: 18, category: "Gaufres", name: "Gaufre Bueno",          price: "$14.99", badge: "💎 Signature", rating: "85%", reviews: 7,  isFeatured: true, description: "Crumbles Bueno, crème noisette et chocolat belge.", photo: "/images/waffle_bueno.jpg" },
-  { id: 19, category: "Gaufres", name: "Gaufre Pistache",       price: "$14.99", badge: "💚 Exotique",  rating: "90%", reviews: 8,  description: "Crème pistache et éclats de pistaches fraîches.", photo: "/images/waffle_lotus.jpg" },
-  { id: 20, category: "Gaufres", name: "Gaufre Halawa",         price: "$14.99", badge: "✨ Nouveau",   rating: "87%", reviews: 6,  isNew: true, description: "Halawa fondante, pistaches et filet de miel.", photo: "/images/waffle_bueno.jpg" },
-  { id: 21, category: "Gaufres", name: "Gaufre Gourmande",      price: "$15.99", badge: "👑 Chef",      rating: "91%", reviews: 11, description: "M&Ms, choco fondu, chantilly et garnitures généreuses.", photo: "/images/waffle_oreo.jpg" },
-  { id: 22, category: "Gaufres", name: "Gaufre Fruité",         price: "$15.99", badge: "🍉 Saison",    rating: "88%", reviews: 9,  description: "Fruits de saison, chantilly et coulis frais.", photo: "/images/waffle_strawberry.jpg" },
-  { id: 23, category: "Gaufres", name: "Gaufre Dubai",          price: "$15.99", badge: "⭐ Premium",   rating: "89%", reviews: 12, isFeatured: true, description: "Crème pistache, kadaifi croustillant façon Dubai.", photo: "/images/waffle_dubai.jpg" },
+  { id: 12, category: "Gaufres",               name: "Gaufre Nutella",                   price: "$12.99", badge: "💛 Classique", rating: "86%",  reviews: 20, description: "Gaufre croustillante garnie de Nutella fondant.", photo: "/images/waffle_nutella.jpg" },
+  { id: 13, category: "Gaufres",               name: "Gaufre Banane",                    price: "$13.99", badge: "🍌 Fruité",    rating: "84%",  reviews: 10, description: "Gaufre chaude aux bananes fraîches et Nutella.", photo: "/images/waffle_nutella.jpg" },
+  { id: 14, category: "Gaufres",               name: "Gaufre Fraise 🍓",                 price: "$17.99", badge: "🍓 Frais",     rating: "88%",  reviews: 15, description: "Gaufre fine et moelleuse aux fraises fraîches.", photo: "/images/waffle_strawberry.jpg" },
+  { id: 15, category: "Gaufres",               name: "Gaufre Lotus",                     price: "$15.99", badge: "🌟 Fan fav",   rating: "90%",  reviews: 18, description: "Gaufre à la crème Lotus Biscoff, notes caramel et épices.", photo: "/images/waffle_lotus.jpg" },
+  { id: 16, category: "Gaufres",               name: "Gaufre Oreo",                      price: "$19.99", badge: "🖤 Crunch",    rating: "84%",  reviews: 19, isFeatured: true, description: "Gaufre moelleuse avec texture croquante de cookies Oreo.", photo: "/images/waffle_oreo.jpg" },
+  { id: 17, category: "Gaufres",               name: "Gaufre Bueno",                     price: "$19.99", badge: "💎 Signature", rating: "71%",  reviews: 7,  isFeatured: true, description: "Gaufre à la crème de noisette Kinder Bueno.", photo: "/images/waffle_bueno.jpg" },
+  { id: 18, category: "Gaufres",               name: "Gaufre Dubai",                     price: "$15.99", badge: "⭐ Premium",   rating: "89%",  reviews: 12, isFeatured: true, description: "Gaufre délicate à la crème pistache façon Dubai.", photo: "/images/waffle_dubai.jpg" },
 
   // ── Croffles ─────────────────────────────────────────────────────────────────
-  { id: 24, category: "Croffles", name: "Croffle Fraise",       price: "$9.99",  badge: "🍓 Frais",     rating: "90%", reviews: 11, description: "Croffle croustillant aux fraises fraîches et coulis.", photo: "/images/waffle_strawberry.jpg" },
-  { id: 25, category: "Croffles", name: "Croffle Oreo",         price: "$9.99",  badge: "🖤 Crunch",    rating: "87%", reviews: 8,  description: "Croffle doré, miettes d'Oreo et crème vanille.", photo: "/images/waffle_oreo.jpg" },
-  { id: 26, category: "Croffles", name: "Croffle Lotus",        price: "$9.99",  badge: "🌟 Fan fav",   rating: "92%", reviews: 13, isFeatured: true, description: "Croffle feuilleté, crème Lotus Biscoff et caramel.", photo: "/images/waffle_lotus.jpg" },
+  { id: 19, category: "Croffles",              name: "Croffle lotus biscoff",             price: "$9.99",  badge: "🌟 Fan fav",   rating: "92%",  reviews: 13, isFeatured: true, description: "Croffle garni de chantilly, crème Lotus Biscoff et miettes de biscuit.", photo: "/images/waffle_lotus.jpg" },
+  { id: 20, category: "Croffles",              name: "Croffle fraise 🍓",                 price: "$9.99",  badge: "🍓 Frais",     rating: "66%",  reviews: 3,  description: "Croffle aux fraises fraîches, chantilly, coulis de chocolat et sucre glace.", photo: "/images/waffle_strawberry.jpg" },
+  { id: 21, category: "Croffles",              name: "Croffle Oreo",                      price: "$9.99",  badge: "🖤 Crunch",    rating: "87%",  reviews: 8,  description: "Croissant façon gaufre garni de crème, miettes d'Oreo et coulis de chocolat.", photo: "/images/waffle_oreo.jpg" },
 
   // ── Poff's ──────────────────────────────────────────────────────────────────
-  { id: 27, category: "Poff's",  name: "Poff's Nutella",        price: "$12.99", badge: "💛 Classique", rating: "88%", reviews: 10, description: "Poff moelleux au Nutella fondant.", photo: "/images/poffs_nutella.jpg" },
-  { id: 28, category: "Poff's",  name: "Poff's Fraise",         price: "$12.99", badge: "🍓 Frais",     rating: "88%", reviews: 14, description: "Poff moelleux aux fraises fraîches et coulis rosé.", photo: "/images/poffs_strawberry.jpg" },
-  { id: 29, category: "Poff's",  name: "Poff's Oreo",           price: "$13.99", badge: "🖤 Crunch",    rating: "84%", reviews: 9,  description: "Poff doré, miettes d'Oreo et crème vanille.", photo: "/images/poffs_nutella.jpg" },
-  { id: 30, category: "Poff's",  name: "Poff's Lotus",          price: "$13.99", badge: "🌟 Fan fav",   rating: "90%", reviews: 12, description: "Poff Biscoff, notes caramel et texture feuilletée.", photo: "/images/poffs_bueno.jpg" },
-  { id: 31, category: "Poff's",  name: "Poff's Pistache",       price: "$13.99", badge: "💚 Nouveau",   rating: "92%", reviews: 6,  isNew: true, description: "Poff à la crème pistache et pistaches concassées.", photo: "/images/poffs_pistachio.jpg" },
-  { id: 32, category: "Poff's",  name: "Poff's Fruité",         price: "$14.99", badge: "🍉 Saison",    rating: "87%", reviews: 7,  description: "Poff aux fruits de saison et coulis maison.", photo: "/images/poffs_strawberry.jpg" },
-  { id: 33, category: "Poff's",  name: "Poff's Bueno",          price: "$14.99", badge: "💎 Signature", rating: "85%", reviews: 8,  description: "Poff au Kinder Bueno, noisette et chocolat.", photo: "/images/poffs_bueno.jpg" },
-  { id: 34, category: "Poff's",  name: "Poff's Dubai",          price: "$14.49", badge: "⭐ Populaire", rating: "77%", reviews: 9,  isFeatured: true, description: "Poff pistache Dubai et croustillant kadaifi.", photo: "/images/poffs_dubai.jpg" },
+  { id: 22, category: "Poff's",                name: "Poff's Nutella",                   price: "$12.99", badge: "💛 Classique", rating: "88%",  reviews: 10, description: "Poff's qui combine la douceur avec l'intensité du Nutella.", photo: "/images/poffs_nutella.jpg" },
+  { id: 23, category: "Poff's",                name: "Poff's fraise 🍓",                 price: "$19.99", badge: "🍓 Nouveau",   rating: "100%", reviews: 3,  isNew: true, description: "Poff's gourmand aux fraises fraîches.", photo: "/images/poffs_strawberry.jpg" },
+  { id: 24, category: "Poff's",                name: "Poff's Oreo",                      price: "$13.99", badge: "🖤 Crunch",    rating: "75%",  reviews: 4,  description: "Texture moelleuse qui contraste avec les cookies croquants.", photo: "/images/poffs_nutella.jpg" },
+  { id: 25, category: "Poff's",                name: "Poff's Lotus",                     price: "$13.99", badge: "🌟 Fan fav",   rating: "90%",  reviews: 12, description: "Poff's garni de crème spéculoos aux notes caramel et épices.", photo: "/images/poffs_bueno.jpg" },
+  { id: 26, category: "Poff's",                name: "Poff's Pistache",                  price: "$13.99", badge: "💚 Exotique",  rating: "92%",  reviews: 6,  description: "Délicate variation à la crème de pistache.", photo: "/images/poffs_pistachio.jpg" },
+  { id: 27, category: "Poff's",                name: "Poff's Bueno",                     price: "$14.99", badge: "💎 Signature", rating: "75%",  reviews: 4,  description: "Poff's à la crème de noisette Kinder Bueno.", photo: "/images/poffs_bueno.jpg" },
+  { id: 28, category: "Poff's",                name: "Poff's Banane",                    price: "$19.99", badge: "🍌 Nouveau",   rating: "100%", reviews: 3,  isNew: true, description: "Banane fraîche en duo avec la douceur du Nutella.", photo: "/images/poffs_strawberry.jpg" },
+  { id: 29, category: "Poff's",                name: "Poff's Dubai",                     price: "$14.49", badge: "⭐ Populaire", rating: "77%",  reviews: 9,  isFeatured: true, description: "Crème pistache, pistaches concassées, kounafa croustillant et Nutella.", photo: "/images/poffs_dubai.jpg" },
+  { id: 30, category: "Poff's",                name: "Poff's fruité",                    price: "$14.99", badge: "🍉 Saison",    rating: "87%",  reviews: 7,  description: "Crêpe épaisse et moelleuse garnie de fruits mélangés : banane, fraise, ananas, myrtille.", photo: "/images/poffs_strawberry.jpg" },
 
-  // ── Milkshakes ($7.99) ──────────────────────────────────────────────────────
-  { id: 35, category: "Milkshakes", name: "Shake Fraise",       price: "$7.99", badge: "🍓 Frais",      rating: "88%", reviews: 18, description: "Milkshake fraise, chantilly et coulis brillant.", photo: "/images/shake_fraise.jpg" },
-  { id: 36, category: "Milkshakes", name: "Shake Banane",       price: "$7.99", badge: "🍌 Fruité",     rating: "85%", reviews: 10, description: "Milkshake banane, caramel et crème fouettée.", photo: "/images/shake_bueno.jpg" },
-  { id: 37, category: "Milkshakes", name: "Shake Oreo",         price: "$7.99", badge: "🍪 Bestseller", rating: "92%", reviews: 25, isFeatured: true, description: "Milkshake Oreo crémeux et finition cookies.", photo: "/images/shake_oreo.jpg" },
-  { id: 38, category: "Milkshakes", name: "Shake Lotus",        price: "$7.99", badge: "🌟 Fan fav",    rating: "90%", reviews: 22, description: "Milkshake Lotus Biscoff et chantilly caramel.", photo: "/images/shake_lotus.jpg" },
-  { id: 39, category: "Milkshakes", name: "Shake KitKat",       price: "$7.99", badge: "🍫 Choco",      rating: "87%", reviews: 11, description: "Milkshake KitKat, chocolat et éclats croustillants.", photo: "/images/shake_oreo.jpg" },
-  { id: 40, category: "Milkshakes", name: "Shake Bueno",        price: "$7.99", badge: "💎 Signature",  rating: "85%", reviews: 14, description: "Milkshake Kinder Bueno, noisette et chocolat.", photo: "/images/shake_bueno.jpg" },
-  { id: 41, category: "Milkshakes", name: "Shake Dubai",        price: "$7.99", badge: "✨ Nouveau",    rating: "88%", reviews: 11, isNew: true, description: "Milkshake pistache et kadaifi façon Dubai.", photo: "/images/shake_dubai.jpg" },
-  { id: 42, category: "Milkshakes", name: "Shake Ferrero",      price: "$7.99", badge: "🌰 Noisette",   rating: "86%", reviews: 9,  description: "Milkshake Ferrero Rocher et noisettes grillées.", photo: "/images/shake_bueno.jpg" },
+  // ── Milkshakes ──────────────────────────────────────────────────────────────
+  { id: 31, category: "Milkshakes",            name: "Shake Fraise",                     price: "$7.99",  badge: "🍓 Frais",     rating: "88%",  reviews: 18, description: "Milkshake fraise, chantilly et coulis brillant.", photo: "/images/shake_fraise.jpg" },
+  { id: 32, category: "Milkshakes",            name: "Shake Banane",                     price: "$7.99",  badge: "🍌 Fruité",    rating: "85%",  reviews: 10, description: "Milkshake banane, caramel et crème fouettée.", photo: "/images/shake_bueno.jpg" },
+  { id: 33, category: "Milkshakes",            name: "Shake Oreo",                       price: "$7.99",  badge: "🍪 Bestseller",rating: "92%",  reviews: 25, isFeatured: true, description: "Milkshake Oreo crémeux et finition cookies.", photo: "/images/shake_oreo.jpg" },
+  { id: 34, category: "Milkshakes",            name: "Shake Lotus",                      price: "$7.99",  badge: "🌟 Fan fav",   rating: "90%",  reviews: 22, description: "Milkshake Lotus Biscoff et chantilly caramel.", photo: "/images/shake_lotus.jpg" },
+  { id: 35, category: "Milkshakes",            name: "Shake KitKat",                     price: "$7.99",  badge: "🍫 Choco",     rating: "87%",  reviews: 11, description: "Milkshake KitKat, chocolat et éclats croustillants.", photo: "/images/shake_oreo.jpg" },
+  { id: 36, category: "Milkshakes",            name: "Shake Bueno",                      price: "$7.99",  badge: "💎 Signature", rating: "85%",  reviews: 14, description: "Milkshake Kinder Bueno, noisette et chocolat.", photo: "/images/shake_bueno.jpg" },
+  { id: 37, category: "Milkshakes",            name: "Shake Dubai",                      price: "$7.99",  badge: "✨ Nouveau",   rating: "88%",  reviews: 11, isNew: true, description: "Milkshake pistache et kadaifi façon Dubai.", photo: "/images/shake_dubai.jpg" },
+  { id: 38, category: "Milkshakes",            name: "Shake Ferrero",                    price: "$7.99",  badge: "🌰 Noisette",  rating: "86%",  reviews: 9,  description: "Milkshake Ferrero Rocher et noisettes grillées.", photo: "/images/shake_bueno.jpg" },
 
-  // ── Fraise Cup ($9.99) ──────────────────────────────────────────────────────
-  { id: 43, category: "Fraise Cup", name: "Fraise Cup Dubai",   price: "$9.99", badge: "⭐ Star",      rating: "95%", reviews: 12, isFeatured: true, description: "Fraises, crème pistache Dubai et kadaifi croustillant.", photo: "/images/shake_dubai.jpg" },
-  { id: 44, category: "Fraise Cup", name: "Fraise Cup Bueno",   price: "$9.99", badge: "💎 Signature", rating: "88%", reviews: 8,  description: "Fraises et crème Kinder Bueno fondante.", photo: "/images/shake_bueno.jpg" },
-  { id: 45, category: "Fraise Cup", name: "Fraise Cup Oreo",    price: "$9.99", badge: "🖤 Crunch",    rating: "84%", reviews: 7,  description: "Fraises fraîches et miettes d'Oreo croquantes.", photo: "/images/shake_oreo.jpg" },
-  { id: 46, category: "Fraise Cup", name: "Fraise Cup Lotus",   price: "$9.99", badge: "🌟 Fan fav",   rating: "90%", reviews: 10, description: "Fraises et crème Lotus Biscoff caramelisée.", photo: "/images/shake_lotus.jpg" },
+  // ── Strawberry ──────────────────────────────────────────────────────────────
+  { id: 39, category: "Strawberry",            name: "Strawberry Dubai",                 price: "$11.99", badge: "⭐ Star",      rating: "86%",  reviews: 45, isFeatured: true, description: "Fraises fraîches, crème pistache Dubai et kadaifi croustillant.", photo: "/images/shake_dubai.jpg" },
+  { id: 40, category: "Strawberry",            name: "Strawberry Bueno",                 price: "$10.99", badge: "💎 Signature", rating: "100%", reviews: 8,  description: "Fraises fraîches à la crème Kinder Bueno fondante.", photo: "/images/shake_bueno.jpg" },
 ];
 
 function MenuCard({
@@ -362,12 +358,13 @@ function FacebookIcon() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CATEGORY_LINKS = [
-  { id: "crepes",     label: "Crêpes",     icon: "🥞" },
-  { id: "gaufres",    label: "Gaufres",    icon: "🧇" },
-  { id: "croffles",   label: "Croffles",   icon: "🥐" },
-  { id: "poffs",      label: "Poff's",     icon: "🫧" },
-  { id: "milkshakes", label: "Milkshakes", icon: "🥤" },
-  { id: "fraisecup",  label: "Fraise Cup", icon: "🍓" },
+  { id: "crepes-classiques",     label: "Crêpes Classiques", icon: "🥞" },
+  { id: "crepes-croustillantes", label: "Croustillantes",    icon: "🥞" },
+  { id: "gaufres",               label: "Gaufres",           icon: "🧇" },
+  { id: "croffles",              label: "Croffles",          icon: "🥐" },
+  { id: "poffs",                 label: "Poff's",            icon: "🫧" },
+  { id: "milkshakes",            label: "Milkshakes",        icon: "🥤" },
+  { id: "strawberry",            label: "Strawberry",        icon: "🍓" },
 ];
 
 function CategoryNav() {
@@ -421,11 +418,11 @@ export default function Home() {
           </a>
 
           <nav className="hidden items-center gap-7 text-sm font-bold text-white/65 md:flex">
-            <a href="#crepes"     className="transition-colors hover:text-[#f5c518]">Crêpes</a>
-            <a href="#gaufres"    className="transition-colors hover:text-[#f5c518]">Gaufres</a>
-            <a href="#milkshakes" className="transition-colors hover:text-[#f5c518]">Milkshakes</a>
-            <a href="#reviews"    className="transition-colors hover:text-[#f5c518]">Avis</a>
-            <a href="#visit"      className="transition-colors hover:text-[#f5c518]">Visiter</a>
+            <a href="#crepes-classiques"     className="transition-colors hover:text-[#f5c518]">Crêpes</a>
+            <a href="#gaufres"               className="transition-colors hover:text-[#f5c518]">Gaufres</a>
+            <a href="#milkshakes"            className="transition-colors hover:text-[#f5c518]">Milkshakes</a>
+            <a href="#reviews"               className="transition-colors hover:text-[#f5c518]">Avis</a>
+            <a href="#visit"                 className="transition-colors hover:text-[#f5c518]">Visiter</a>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -558,12 +555,13 @@ export default function Home() {
 
       {/* ── Category Carousels ────────────────────────────────────────────────── */}
       {([
-        { sectionId: "crepes",     label: "Crêpes",     icon: "🥞", cat: "Crêpes"     },
-        { sectionId: "gaufres",    label: "Gaufres",    icon: "🧇", cat: "Gaufres"    },
-        { sectionId: "croffles",   label: "Croffles",   icon: "🥐", cat: "Croffles"   },
-        { sectionId: "poffs",      label: "Poff's",     icon: "🫧", cat: "Poff's"     },
-        { sectionId: "milkshakes", label: "Milkshakes", icon: "🥤", cat: "Milkshakes" },
-        { sectionId: "fraisecup",  label: "Fraise Cup", icon: "🍓", cat: "Fraise Cup" },
+        { sectionId: "crepes-classiques",     label: "Crêpes Classiques",    icon: "🥞", cat: "Crêpes Classiques"     },
+        { sectionId: "crepes-croustillantes", label: "Crêpes Croustillantes", icon: "🥞", cat: "Crêpes Croustillantes" },
+        { sectionId: "gaufres",               label: "Gaufres",              icon: "🧇", cat: "Gaufres"               },
+        { sectionId: "croffles",              label: "Croffles",             icon: "🥐", cat: "Croffles"              },
+        { sectionId: "poffs",                 label: "Poff's",               icon: "🫧", cat: "Poff's"                },
+        { sectionId: "milkshakes",            label: "Milkshakes",           icon: "🥤", cat: "Milkshakes"            },
+        { sectionId: "strawberry",            label: "Strawberry",           icon: "🍓", cat: "Strawberry"            },
       ] as const).map(({ sectionId, label, icon, cat }) => (
         <CategoryCarousel
           key={cat}

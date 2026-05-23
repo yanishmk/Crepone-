@@ -641,7 +641,18 @@ export default function Home() {
             <p className="text-sm text-white/55">
               668 Boul. Saint-Joseph, Gatineau, QC · Ouvert 18h – 23h45 tous les jours
             </p>
-            <p className="mt-2 text-xs text-white/30">© 2025 CrepOne. Tous droits réservés.</p>
+            <div className="mt-2 flex items-center justify-center gap-3">
+              <p className="text-xs text-white/30">© 2025 CrepOne. Tous droits réservés.</p>
+              <a
+                href="/admin"
+                aria-label="Espace gestionnaire"
+                className="grid h-7 w-7 place-items-center rounded-full text-white/20 transition-all hover:bg-white/10 hover:text-white/60"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.34.07-.69.07-1.08s-.03-.73-.07-1.08l2.32-1.82c.21-.16.27-.46.13-.7l-2.2-3.81c-.13-.23-.43-.31-.66-.23l-2.74 1.1c-.57-.44-1.18-.8-1.85-1.07L14 2.42C13.95 2.18 13.73 2 13.5 2h-3c-.23 0-.45.18-.49.42L9.67 5.05c-.67.27-1.28.63-1.85 1.07L5.08 5.02c-.24-.09-.53 0-.66.23L2.22 9.06c-.14.23-.08.54.13.7l2.32 1.82C4.63 11.27 4.6 11.63 4.6 12s.03.73.07 1.08L2.35 14.9c-.21.16-.27.46-.13.7l2.2 3.81c.13.23.43.31.66.23l2.74-1.1c.57.44 1.18.8 1.85 1.07l.34 2.63c.05.24.27.42.5.42h3c.23 0 .45-.18.49-.42l.34-2.63c.67-.27 1.28-.63 1.85-1.07l2.74 1.1c.23.09.53 0 .66-.23l2.2-3.81c.14-.23.08-.54-.13-.7l-2.32-1.82z"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </footer>

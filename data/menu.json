@@ -596,7 +596,7 @@
     "rating": "88%",
     "reviews": 18,
     "description": "Milkshake fraise, chantilly et coulis brillant.",
-    "photo": "/images/shake_fraise.jpg",
+    "photo": "/images/shake_fraise_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -610,7 +610,7 @@
     "rating": "85%",
     "reviews": 10,
     "description": "Milkshake banane, caramel et crème fouettée.",
-    "photo": "/images/shake_bueno.jpg",
+    "photo": "/images/shake_banane_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -624,7 +624,7 @@
     "rating": "92%",
     "reviews": 25,
     "description": "Milkshake Oreo crémeux et finition cookies.",
-    "photo": "/images/shake_oreo.jpg",
+    "photo": "/images/shake_oreo_ai.png",
     "isNew": false,
     "isFeatured": true,
     "inStock": true
@@ -638,7 +638,7 @@
     "rating": "90%",
     "reviews": 22,
     "description": "Milkshake Lotus Biscoff et chantilly caramel.",
-    "photo": "/images/shake_lotus.jpg",
+    "photo": "/images/shake_lotus_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -652,7 +652,7 @@
     "rating": "87%",
     "reviews": 11,
     "description": "Milkshake KitKat, chocolat et éclats croustillants.",
-    "photo": "/images/shake_oreo.jpg",
+    "photo": "/images/shake_kitkat_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -666,7 +666,7 @@
     "rating": "85%",
     "reviews": 14,
     "description": "Milkshake Kinder Bueno, noisette et chocolat.",
-    "photo": "/images/shake_bueno.jpg",
+    "photo": "/images/shake_bueno_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -680,7 +680,7 @@
     "rating": "88%",
     "reviews": 11,
     "description": "Milkshake pistache et kadaifi façon Dubai.",
-    "photo": "/images/shake_dubai.jpg",
+    "photo": "/images/shake_dubai_ai.png",
     "isNew": true,
     "isFeatured": false,
     "inStock": true
@@ -694,7 +694,7 @@
     "rating": "86%",
     "reviews": 9,
     "description": "Milkshake Ferrero Rocher et noisettes grillées.",
-    "photo": "/images/shake_bueno.jpg",
+    "photo": "/images/shake_ferrero_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true

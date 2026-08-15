@@ -8,7 +8,7 @@
     "rating": "84%",
     "reviews": 13,
     "description": "L'intensité du Nutella fondant sur une crêpe moelleuse et dorée.",
-    "photo": "/images/crepe_nutella.jpg",
+    "photo": "/images/crepe_nutella_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -22,7 +22,7 @@
     "rating": "86%",
     "reviews": 18,
     "description": "Fraises fraîches et Nutella fondant sur crêpe moelleuse et dorée.",
-    "photo": "/images/crepe_fraise.jpg",
+    "photo": "/images/crepe_fraise_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -36,7 +36,7 @@
     "rating": "84%",
     "reviews": 12,
     "description": "Rondelles de banane fraîche, Nutella et caramel.",
-    "photo": "/images/crepe_banane.jpg",
+    "photo": "/images/crepe_banane_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -50,7 +50,7 @@
     "rating": "84%",
     "reviews": 19,
     "description": "Miettes d'Oreo, crème vanille et chocolat fondu.",
-    "photo": "/images/crepe_oreo.jpg",
+    "photo": "/images/crepe_oreo_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -64,7 +64,7 @@
     "rating": "90%",
     "reviews": 10,
     "description": "Pâte Lotus Biscoff et miettes de biscuit caramel.",
-    "photo": "/images/crepe_lotus.jpg",
+    "photo": "/images/crepe_lotus_pro_ai.png",
     "isNew": false,
     "isFeatured": true,
     "inStock": true
@@ -78,7 +78,7 @@
     "rating": "75%",
     "reviews": 12,
     "description": "Kinder Bueno, chocolat au lait et chantilly.",
-    "photo": "/images/crepe_bueno.jpg",
+    "photo": "/images/crepe_bueno_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -92,7 +92,7 @@
     "rating": "100%",
     "reviews": 8,
     "description": "Crème pistache riche et pistaches concassées.",
-    "photo": "/images/crepe_pistache.jpg",
+    "photo": "/images/crepe_pistache_pro_ai.png",
     "isNew": true,
     "isFeatured": false,
     "inStock": true
@@ -120,7 +120,7 @@
     "rating": "70%",
     "reviews": 10,
     "description": "Kiwi, fraise, banane et myrtille sur crêpe dorée.",
-    "photo": "/images/crepe_fruite.jpg",
+    "photo": "/images/crepe_fruite_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -134,7 +134,7 @@
     "rating": "88%",
     "reviews": 14,
     "description": "Crêpe garnie de crème El Mordjene et noisettes grillées.",
-    "photo": "/images/crepe_mordjene.jpg",
+    "photo": "/images/crepe_mordjene_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -148,7 +148,7 @@
     "rating": "87%",
     "reviews": 8,
     "description": "Crêpe à la crème Halawa, pistaches et filet de crème blanche.",
-    "photo": "/images/crepe_halawa.jpg",
+    "photo": "/images/crepe_halawa_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -162,7 +162,7 @@
     "rating": "92%",
     "reviews": 15,
     "description": "M&Ms, Ferrero Rocher et chocolat fondu généreusement.",
-    "photo": "/images/crepe_gourmande.jpg",
+    "photo": "/images/crepe_gourmande_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -190,7 +190,7 @@
     "rating": "",
     "reviews": 0,
     "description": "Crêpe croustillante garnie de crème pistache et pistaches concassées.",
-    "photo": "/images/crepe_pistache.jpg",
+    "photo": "/images/crepe_pistache_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -204,7 +204,7 @@
     "rating": "66%",
     "reviews": 3,
     "description": "Crêpe croustillante généreusement garnie de toppings gourmands.",
-    "photo": "/images/crepe_gourmande.jpg",
+    "photo": "/images/crepe_gourmande_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -219,7 +219,7 @@
     "rating": "83%",
     "reviews": 6,
     "description": "Crêpe croustillante garnie de crème Bueno, chocolat et éclats fondants.",
-    "photo": "/images/crepe_bueno.jpg",
+    "photo": "/images/crepe_bueno_pro_ai.png",
     "isNew": false,
     "isFeatured": false
   },
@@ -233,7 +233,7 @@
     "rating": "80%",
     "reviews": 5,
     "description": "Crêpe croustillante avec fraises, Nutella et finition gourmande.",
-    "photo": "/images/crepe_fraise.jpg",
+    "photo": "/images/crepe_fraise_pro_ai.png",
     "isNew": false,
     "isFeatured": false
   },
@@ -246,7 +246,7 @@
     "rating": "86%",
     "reviews": 20,
     "description": "Gaufre croustillante garnie de Nutella fondant.",
-    "photo": "/images/waffle_nutella.jpg",
+    "photo": "/images/waffle_nutella_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -260,7 +260,7 @@
     "rating": "84%",
     "reviews": 10,
     "description": "Gaufre chaude aux bananes fraîches et Nutella.",
-    "photo": "/images/waffle_banane.jpg",
+    "photo": "/images/waffle_banane_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -274,7 +274,7 @@
     "rating": "88%",
     "reviews": 15,
     "description": "Gaufre fine et moelleuse aux fraises fraîches et banane.",
-    "photo": "/images/waffle_fraise.jpg",
+    "photo": "/images/waffle_fraise_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -288,7 +288,7 @@
     "rating": "90%",
     "reviews": 18,
     "description": "Gaufre à la crème Lotus Biscoff, notes caramel et épices.",
-    "photo": "/images/waffle_lotus.jpg",
+    "photo": "/images/waffle_lotus_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -302,7 +302,7 @@
     "rating": "84%",
     "reviews": 19,
     "description": "Gaufre moelleuse avec texture croquante de cookies Oreo.",
-    "photo": "/images/waffle_oreo.jpg",
+    "photo": "/images/waffle_oreo_pro_ai.png",
     "isNew": false,
     "isFeatured": true,
     "inStock": true
@@ -316,7 +316,7 @@
     "rating": "71%",
     "reviews": 7,
     "description": "Gaufre à la crème de noisette Kinder Bueno.",
-    "photo": "/images/waffle_bueno.jpg",
+    "photo": "/images/waffle_bueno_pro_ai.png",
     "isNew": false,
     "isFeatured": true,
     "inStock": true
@@ -330,7 +330,7 @@
     "rating": "90%",
     "reviews": 8,
     "description": "Gaufre à la crème de pistache et éclats de pistaches fraîches.",
-    "photo": "/images/waffle_pistache.jpg",
+    "photo": "/images/waffle_pistache_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -344,7 +344,7 @@
     "rating": "91%",
     "reviews": 11,
     "description": "Gaufre généreuse : KitKat, M&Ms, Ferrero et chocolat fondu.",
-    "photo": "/images/waffle_gourmande.jpg",
+    "photo": "/images/waffle_gourmande_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -358,7 +358,7 @@
     "rating": "89%",
     "reviews": 12,
     "description": "Gaufre délicate à la crème pistache façon Dubai.",
-    "photo": "/images/waffle_dubai.jpg",
+    "photo": "/images/waffle_dubai_pro_ai.png",
     "isNew": false,
     "isFeatured": true,
     "inStock": true
@@ -372,7 +372,7 @@
     "rating": "92%",
     "reviews": 13,
     "description": "Croffle garni de chantilly, crème Lotus Biscoff et miettes de biscuit.",
-    "photo": "/images/croffle_lotus.jpg",
+    "photo": "/images/croffle_lotus_pro_ai.png",
     "isNew": false,
     "isFeatured": true,
     "inStock": true
@@ -386,7 +386,7 @@
     "rating": "66%",
     "reviews": 3,
     "description": "Croffle aux fraises fraîches, chantilly, coulis de chocolat et sucre glace.",
-    "photo": "/images/croffle_strawberry.jpg",
+    "photo": "/images/croffle_strawberry_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -400,7 +400,7 @@
     "rating": "87%",
     "reviews": 8,
     "description": "Croissant façon gaufre garni de crème, miettes d'Oreo et coulis de chocolat.",
-    "photo": "/images/croffle_oreo.jpg",
+    "photo": "/images/croffle_oreo_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -415,7 +415,7 @@
     "rating": "100%",
     "reviews": 3,
     "description": "Croffle garni de bananes, coulis de chocolat et sucre glace.",
-    "photo": "/images/croffle_lotus.jpg",
+    "photo": "/images/croffle_lotus_pro_ai.png",
     "isNew": false,
     "isFeatured": false
   },
@@ -428,7 +428,7 @@
     "rating": "88%",
     "reviews": 10,
     "description": "Poff's qui combine la douceur avec l'intensité du Nutella.",
-    "photo": "/images/poffs_nutella.jpg",
+    "photo": "/images/poffs_nutella_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -442,7 +442,7 @@
     "rating": "100%",
     "reviews": 3,
     "description": "Poff's gourmand aux fraises fraîches.",
-    "photo": "/images/poffs_strawberry.jpg",
+    "photo": "/images/poffs_strawberry_pro_ai.png",
     "isNew": true,
     "isFeatured": false,
     "inStock": true
@@ -456,7 +456,7 @@
     "rating": "75%",
     "reviews": 4,
     "description": "Texture moelleuse qui contraste avec les cookies croquants.",
-    "photo": "/images/poffs_oreo.jpg",
+    "photo": "/images/poffs_oreo_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -470,7 +470,7 @@
     "rating": "90%",
     "reviews": 12,
     "description": "Poff's garni de crème spéculoos aux notes caramel et épices.",
-    "photo": "/images/poffs_lotus.jpg",
+    "photo": "/images/poffs_lotus_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -484,7 +484,7 @@
     "rating": "92%",
     "reviews": 6,
     "description": "Délicate variation à la crème de pistache.",
-    "photo": "/images/poffs_pistache_dubai.jpg",
+    "photo": "/images/poffs_pistache_dubai_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -498,7 +498,7 @@
     "rating": "75%",
     "reviews": 4,
     "description": "Poff's à la crème de noisette Kinder Bueno.",
-    "photo": "/images/poffs_bueno.jpg",
+    "photo": "/images/poffs_bueno_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -512,7 +512,7 @@
     "rating": "100%",
     "reviews": 4,
     "description": "Banane fraîche en duo avec la douceur du Nutella.",
-    "photo": "/images/poffs_banane.jpg",
+    "photo": "/images/poffs_banane_pro_ai.png",
     "isNew": true,
     "isFeatured": false,
     "inStock": true
@@ -526,7 +526,7 @@
     "rating": "81%",
     "reviews": 11,
     "description": "Crème pistache, pistaches concassées, kounafa croustillant et Nutella.",
-    "photo": "/images/poffs_pistache_dubai.jpg",
+    "photo": "/images/poffs_pistache_dubai_pro_ai.png",
     "isNew": false,
     "isFeatured": true,
     "inStock": true
@@ -540,7 +540,7 @@
     "rating": "87%",
     "reviews": 7,
     "description": "Crêpe épaisse et moelleuse garnie de fruits mélangés : banane, fraise, ananas, myrtille.",
-    "photo": "/images/poffs_fruite.jpg",
+    "photo": "/images/poffs_fruite_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true
@@ -555,7 +555,7 @@
     "rating": "",
     "reviews": 0,
     "description": "Poff's garnis d'un mélange de noix et de pistaches.",
-    "photo": "/images/poffs_pistache_dubai.jpg",
+    "photo": "/images/poffs_pistache_dubai_pro_ai.png",
     "isNew": false,
     "isFeatured": false
   },
@@ -569,7 +569,7 @@
     "rating": "66%",
     "reviews": 3,
     "description": "Poff's aux fraises avec Nutella fondant.",
-    "photo": "/images/poffs_strawberry.jpg",
+    "photo": "/images/poffs_strawberry_pro_ai.png",
     "isNew": false,
     "isFeatured": false
   },
@@ -583,7 +583,7 @@
     "rating": "",
     "reviews": 0,
     "description": "Poff's avec Ferrero Rocher, KitKat, M&M's et Nutella.",
-    "photo": "/images/poffs_gourmandes.jpg",
+    "photo": "/images/poffs_gourmandes_pro_ai.png",
     "isNew": false,
     "isFeatured": false
   },
@@ -778,7 +778,7 @@
     "rating": "100%",
     "reviews": 8,
     "description": "Fraises fraîches à la crème Kinder Bueno fondante.",
-    "photo": "/images/shake_bueno.jpg",
+    "photo": "/images/shake_bueno_strawberry_pro_ai.png",
     "isNew": false,
     "isFeatured": false,
     "inStock": true

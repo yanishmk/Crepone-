@@ -47,6 +47,59 @@ type MenuItem = {
   inStock?: boolean;
 };
 
+type CartItem = { item: MenuItem; quantity: number };
+type OrderType = "pickup" | "dine_in";
+type PickupMode = "asap" | "scheduled";
+
+function parsePriceValue(price: string): number {
+  const n = Number(price.replace(/[^0-9.]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+// Taxe combinée TPS+TVQ — dupliquée côté client uniquement pour l'aperçu du
+// panier ; le montant faisant foi est recalculé côté serveur dans /api/order.
+const TAX_RATE_PREVIEW = 0.14975;
+
+// Heures d'ouverture (voir footer/promo bar du site) — bornent les créneaux
+// de retrait proposés au client.
+const BUSINESS_OPEN_HOUR = 18;
+const BUSINESS_CLOSE_HOUR = 23;
+const BUSINESS_CLOSE_MINUTE = 45;
+
+// Estimation par défaut du temps de préparation d'une commande (crêpe/gaufre
+// faite à la commande) — ajustable si besoin.
+const DEFAULT_PREP_MINUTES = 20;
+
+function formatHHMM(d: Date): string {
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+/**
+ * Détermine la fenêtre de retrait disponible autour de l'instant "now":
+ * - si le magasin est ouvert maintenant, la fenêtre commence maintenant même
+ *   (ASAP possible) et se termine à la fermeture du jour;
+ * - sinon, la prochaine fenêtre est l'ouverture (aujourd'hui si elle n'est
+ *   pas encore passée, sinon demain).
+ */
+function getSchedulableWindow(now: Date) {
+  const atTime = (hours: number, minutes: number, dayOffset = 0) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() + dayOffset);
+    d.setHours(hours, minutes, 0, 0);
+    return d;
+  };
+
+  const todayOpen = atTime(BUSINESS_OPEN_HOUR, 0);
+  const todayClose = atTime(BUSINESS_CLOSE_HOUR, BUSINESS_CLOSE_MINUTE);
+
+  if (now < todayOpen) {
+    return { open: todayOpen, close: todayClose, isOpenNow: false };
+  }
+  if (now <= todayClose) {
+    return { open: now, close: todayClose, isOpenNow: true };
+  }
+  return { open: atTime(BUSINESS_OPEN_HOUR, 0, 1), close: atTime(BUSINESS_CLOSE_HOUR, BUSINESS_CLOSE_MINUTE, 1), isOpenNow: false };
+}
 
 function MenuCard({
   item,
@@ -54,7 +107,7 @@ function MenuCard({
 }: {
   item: MenuItem;
   index: number;
-  onAdd: () => void;
+  onAdd: (item: MenuItem) => void;
 }) {
   return (
     <article className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm">
@@ -95,7 +148,7 @@ function MenuCard({
         <div className="mt-4 flex items-center justify-between gap-2">
           <span className="text-xl font-black text-[#141414]">{item.price}</span>
           <button
-            onClick={onAdd}
+            onClick={() => onAdd(item)}
             className="rounded-full bg-[#141414] px-5 py-2 text-xs font-black text-white transition-all hover:scale-105 hover:bg-[#1e7a45] active:scale-95"
           >
             + Ajouter
@@ -117,7 +170,7 @@ function CategoryCarousel({
   title: string;
   icon: string;
   items: MenuItem[];
-  onAdd: () => void;
+  onAdd: (item: MenuItem) => void;
 }) {
   const [active, setActive] = useState(0);
   const touchStartX = useRef(0);
@@ -339,8 +392,41 @@ function CategoryNav() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const [cartCount, setCartCount] = useState(0);
-  const addToCart = () => setCartCount((n) => n + 1);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const cartCount = cart.reduce((sum, c) => sum + c.quantity, 0);
+  const toastTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const addToCart = (item: MenuItem) => {
+    setCart((prev) => {
+      const existing = prev.find((c) => c.item.id === item.id);
+      if (existing) {
+        return prev.map((c) =>
+          c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c
+        );
+      }
+      return [...prev, { item, quantity: 1 }];
+    });
+    // Confirmation discrète — on n'interrompt pas la navigation dans le menu
+    // en ouvrant le panier à chaque ajout.
+    setToast(`✓ ${item.name} ajouté au panier`);
+    if (toastTimeout.current) clearTimeout(toastTimeout.current);
+    toastTimeout.current = setTimeout(() => setToast(null), 2200);
+  };
+
+  const updateQuantity = (id: number, delta: number) => {
+    setCart((prev) =>
+      prev
+        .map((c) => (c.item.id === id ? { ...c, quantity: c.quantity + delta } : c))
+        .filter((c) => c.quantity > 0)
+    );
+  };
+
+  const removeFromCart = (id: number) => {
+    setCart((prev) => prev.filter((c) => c.item.id !== id));
+  };
+
   const [menu, setMenu] = useState<MenuItem[]>([]);
   useEffect(() => {
     fetch("/api/menu").then((r) => r.json()).then(setMenu);
@@ -380,7 +466,7 @@ export default function Home() {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={addToCart}
+              onClick={() => setIsCartOpen(true)}
               aria-label={`Panier (${cartCount})`}
               className="relative rounded-full bg-[#fef9c3] p-2.5 text-[#141414] transition-colors hover:bg-[#fde047]"
             >
@@ -656,6 +742,21 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart}
+        onOrderSuccess={() => setCart([])}
+      />
+
+      {toast && (
+        <div className="animate-slide-up fixed bottom-6 left-1/2 z-[110] -translate-x-1/2 rounded-full bg-[#141414] px-5 py-3 text-sm font-black text-white shadow-2xl">
+          {toast}
+        </div>
+      )}
     </main>
   );
 }
@@ -706,5 +807,366 @@ function CartIcon() {
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
     </svg>
+  );
+}
+
+function CartDrawer({
+  isOpen,
+  onClose,
+  cart,
+  updateQuantity,
+  removeFromCart,
+  onOrderSuccess,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  cart: CartItem[];
+  updateQuantity: (id: number, delta: number) => void;
+  removeFromCart: (id: number) => void;
+  onOrderSuccess: () => void;
+}) {
+  const [step, setStep] = useState<"cart" | "checkout" | "success">("cart");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [orderType, setOrderType] = useState<OrderType>("pickup");
+  const [pickupMode, setPickupMode] = useState<PickupMode>("asap");
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState("");
+  const [readyTime, setReadyTime] = useState<Date | null>(null);
+
+  const subtotal = cart.reduce(
+    (sum, c) => sum + parsePriceValue(c.item.price) * c.quantity,
+    0
+  );
+  const taxPreview = subtotal * TAX_RATE_PREVIEW;
+  const totalPreview = subtotal + taxPreview;
+
+  const phoneDigits = phone.replace(/\D/g, "");
+  const isPhoneValid = phoneDigits.length >= 7;
+  const canSubmit = name.trim().length > 0 && isPhoneValid;
+
+  if (!isOpen) return null;
+
+  const now = new Date();
+  const schedule = getSchedulableWindow(now);
+  const asapReadyTime = new Date(
+    Math.min(now.getTime() + DEFAULT_PREP_MINUTES * 60_000, schedule.close.getTime())
+  );
+
+  function goToCheckout() {
+    setPickupMode(schedule.isOpenNow ? "asap" : "scheduled");
+    setScheduledTime(formatHHMM(schedule.open));
+    setStep("checkout");
+  }
+
+  async function submitOrder() {
+    setSubmitting(true);
+    setError(null);
+    try {
+      let requestedFor: Date;
+      if (pickupMode === "asap") {
+        requestedFor = asapReadyTime;
+      } else {
+        const [h, m] = scheduledTime.split(":").map(Number);
+        requestedFor = new Date(schedule.open);
+        requestedFor.setHours(h, m, 0, 0);
+      }
+
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: { name, phone },
+          orderType,
+          requestedFor: requestedFor.toISOString(),
+          items: cart.map((c) => ({
+            name: c.item.name,
+            price: c.item.price,
+            quantity: c.quantity,
+          })),
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "La commande n'a pas pu être envoyée");
+      }
+      setReadyTime(requestedFor);
+      setCustomerName(name);
+      setStep("success");
+      onOrderSuccess();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function handleClose() {
+    onClose();
+    // Laisse le temps à l'animation de fermeture avant de réinitialiser,
+    // sinon on voit le flash du panier vide/étape "cart" pendant la sortie.
+    setTimeout(() => {
+      setStep("cart");
+      setName("");
+      setPhone("");
+      setError(null);
+    }, 200);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex justify-end bg-black/50"
+      onClick={handleClose}
+    >
+      <div
+        className="animate-slide-in-right flex h-full w-full max-w-md flex-col overflow-y-auto bg-[#0a2018] p-6 text-white shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-xl font-black">
+            {step === "cart" && `Votre panier${cart.length ? ` (${cart.length})` : ""}`}
+            {step === "checkout" && "Vos informations"}
+            {step === "success" && "Commande envoyée !"}
+          </h2>
+          <button
+            onClick={handleClose}
+            aria-label="Fermer le panier"
+            className="grid h-8 w-8 place-items-center rounded-full text-2xl text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            ×
+          </button>
+        </div>
+
+        {step === "cart" && (
+          <>
+            {cart.length === 0 ? (
+              <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
+                <p className="text-4xl">🥞</p>
+                <p className="font-bold text-white/70">Ton panier est vide.</p>
+                <button
+                  onClick={handleClose}
+                  className="mt-2 rounded-full bg-white/10 px-6 py-2.5 text-sm font-black hover:bg-white/20"
+                >
+                  Voir le menu
+                </button>
+              </div>
+            ) : (
+              <div className="flex-1 space-y-3">
+                {cart.map((c) => (
+                  <div
+                    key={c.item.id}
+                    className="flex items-center gap-3 rounded-2xl bg-white/5 p-3"
+                  >
+                    <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-white/10">
+                      <Image
+                        alt={c.item.name}
+                        fill
+                        className="object-cover"
+                        src={c.item.photo}
+                        sizes="56px"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold">{c.item.name}</p>
+                      <p className="text-xs text-white/50">{c.item.price}</p>
+                    </div>
+                    <div className="flex flex-shrink-0 items-center gap-2">
+                      <button
+                        onClick={() => updateQuantity(c.item.id, -1)}
+                        aria-label={`Retirer un ${c.item.name}`}
+                        className="h-7 w-7 rounded-full bg-white/10 transition-colors hover:bg-white/20"
+                      >
+                        −
+                      </button>
+                      <span className="w-5 text-center text-sm font-bold tabular-nums">
+                        {c.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(c.item.id, 1)}
+                        aria-label={`Ajouter un ${c.item.name}`}
+                        className="h-7 w-7 rounded-full bg-white/10 transition-colors hover:bg-white/20"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => removeFromCart(c.item.id)}
+                      className="flex-shrink-0 text-white/40 transition-colors hover:text-red-400"
+                      aria-label={`Retirer ${c.item.name} du panier`}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {cart.length > 0 && (
+              <div className="mt-6 space-y-1.5 border-t border-white/10 pt-4 text-sm">
+                <div className="flex justify-between text-white/60">
+                  <span>Sous-total</span>
+                  <span>${subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-white/60">
+                  <span>Taxes (TPS + TVQ)</span>
+                  <span>${taxPreview.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between border-t border-white/10 pt-1.5 text-base font-black">
+                  <span>Total</span>
+                  <span>${totalPreview.toFixed(2)}</span>
+                </div>
+                <button
+                  onClick={goToCheckout}
+                  className="mt-4 w-full rounded-full bg-[#1e7a45] py-3 text-sm font-black transition-all hover:scale-[1.02] hover:bg-[#196638]"
+                >
+                  Continuer →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {step === "checkout" && (
+          <div className="flex flex-1 flex-col gap-4">
+            <div>
+              <label className="mb-1 block text-xs font-bold text-white/60">Nom complet</label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full rounded-lg bg-white/10 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#1e7a45]"
+                placeholder="Ton nom"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-bold text-white/60">Téléphone</label>
+              <input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full rounded-lg bg-white/10 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#1e7a45]"
+                placeholder="514-555-0100"
+              />
+              {phone.length > 0 && !isPhoneValid && (
+                <p className="mt-1 text-xs font-bold text-amber-400">
+                  Numéro de téléphone incomplet.
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-bold text-white/60">Type de commande</label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setOrderType("pickup")}
+                  className={`flex-1 rounded-full py-2 text-xs font-black transition-colors ${
+                    orderType === "pickup" ? "bg-[#1e7a45]" : "bg-white/10 hover:bg-white/15"
+                  }`}
+                >
+                  À emporter
+                </button>
+                <button
+                  onClick={() => setOrderType("dine_in")}
+                  className={`flex-1 rounded-full py-2 text-xs font-black transition-colors ${
+                    orderType === "dine_in" ? "bg-[#1e7a45]" : "bg-white/10 hover:bg-white/15"
+                  }`}
+                >
+                  Sur place
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-bold text-white/60">Heure de retrait</label>
+              {!schedule.isOpenNow && (
+                <p className="mb-2 text-xs font-bold text-amber-400">
+                  CrepOne est fermé en ce moment (ouvert 18h–23h45) — choisis une heure de
+                  retrait{" "}
+                  {schedule.open.toDateString() === now.toDateString() ? "pour ce soir." : "pour demain."}
+                </p>
+              )}
+              <div className="flex gap-2">
+                {schedule.isOpenNow && (
+                  <button
+                    onClick={() => setPickupMode("asap")}
+                    className={`flex-1 rounded-full py-2 text-xs font-black transition-colors ${
+                      pickupMode === "asap" ? "bg-[#1e7a45]" : "bg-white/10 hover:bg-white/15"
+                    }`}
+                  >
+                    Dès que possible
+                  </button>
+                )}
+                <button
+                  onClick={() => setPickupMode("scheduled")}
+                  className={`flex-1 rounded-full py-2 text-xs font-black transition-colors ${
+                    pickupMode === "scheduled" ? "bg-[#1e7a45]" : "bg-white/10 hover:bg-white/15"
+                  }`}
+                >
+                  Choisir une heure
+                </button>
+              </div>
+
+              {pickupMode === "asap" ? (
+                <p className="mt-2 text-xs text-white/50">
+                  Prête vers <span className="font-bold text-white">{formatHHMM(asapReadyTime)}</span>{" "}
+                  (~{DEFAULT_PREP_MINUTES} min de préparation)
+                </p>
+              ) : (
+                <input
+                  type="time"
+                  value={scheduledTime}
+                  min={formatHHMM(schedule.open)}
+                  max={formatHHMM(schedule.close)}
+                  onChange={(e) => setScheduledTime(e.target.value)}
+                  className="mt-2 w-full rounded-lg bg-white/10 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#1e7a45]"
+                />
+              )}
+            </div>
+
+            {error && (
+              <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm font-bold text-red-400">
+                {error}
+              </p>
+            )}
+
+            <div className="mt-auto flex gap-2 border-t border-white/10 pt-4">
+              <button
+                onClick={() => setStep("cart")}
+                className="rounded-full border border-white/20 px-4 py-3 text-xs font-black transition-colors hover:bg-white/10"
+              >
+                ← Retour
+              </button>
+              <button
+                onClick={submitOrder}
+                disabled={submitting || !canSubmit}
+                className="flex-1 rounded-full bg-[#1e7a45] py-3 text-sm font-black transition-all hover:bg-[#196638] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {submitting ? "Envoi…" : error ? "Réessayer" : "Confirmer la commande"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === "success" && (
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
+            <p className="text-4xl">🎉</p>
+            <p className="text-lg font-black">Merci {customerName} !</p>
+            <p className="text-sm text-white/60">
+              Ta commande a été envoyée à CrepOne.
+              {readyTime && (
+                <>
+                  {" "}
+                  Prête vers <span className="font-bold text-white">{formatHHMM(readyTime)}</span>.
+                </>
+              )}
+            </p>
+            <button
+              onClick={handleClose}
+              className="mt-4 rounded-full bg-white/10 px-6 py-3 text-sm font-black hover:bg-white/20"
+            >
+              Fermer
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

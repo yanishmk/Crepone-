@@ -16,6 +16,7 @@
   --animate-float: float 3s ease-in-out infinite;
   --animate-float-slow: float 4.5s ease-in-out infinite;
   --animate-slide-up: slideUp 0.65s ease-out both;
+  --animate-slide-in-right: slideInRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   --animate-fade-in: fadeIn 0.8s ease-out both;
   --animate-pulse-glow: pulseGlow 2.2s ease-in-out infinite;
 }
@@ -33,6 +34,11 @@
 @keyframes slideUp {
   from { transform: translateY(28px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
 }
 
 @keyframes fadeIn {

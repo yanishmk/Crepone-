@@ -602,6 +602,7 @@ export default function Home() {
         { sectionId: "milkshakes",            label: "Milkshakes",           icon: "🥤", cat: "Milkshakes"            },
         { sectionId: "smoothies",             label: "Smoothies",            icon: "🍹", cat: "Smoothies"             },
         { sectionId: "strawberry",            label: "Strawberry",           icon: "🍓", cat: "Strawberry"            },
+        { sectionId: "boissons",               label: "Boissons",             icon: "💧", cat: "Boissons"              },
       ]).map(({ sectionId, label, icon, cat }) => (
         <CategoryCarousel
           key={cat}

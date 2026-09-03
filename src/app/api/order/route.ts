@@ -11,6 +11,13 @@ const HUB_API_KEY = process.env.CLUSTER_HUB_WEBSITE_API_KEY || "";
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  if (process.env.ENABLE_PAY_AT_POS_ORDERS !== "true") {
+    return NextResponse.json(
+      { error: "Les commandes directes sans paiement sont desactivees" },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = (await req.json()) as CheckoutOrderRequest;
     const payload = createHubOrderPayload(body, crypto.randomUUID(), "pay_at_pos");

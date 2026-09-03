@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { isAdminRequest } from "@/lib/adminAuth";
 
 const DATA = path.join(process.cwd(), "data", "menu.json");
 
 function read() { return JSON.parse(fs.readFileSync(DATA, "utf-8")); }
 function write(d: unknown) { fs.writeFileSync(DATA, JSON.stringify(d, null, 2)); }
 
+export const runtime = "nodejs";
+
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  if (!(await isAdminRequest())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { id } = await params;
   const body = await req.json();
   const menu = read();
@@ -19,6 +26,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+  if (!(await isAdminRequest())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { id } = await params;
   const menu = read().filter((m: { id: number }) => m.id !== parseInt(id));
   write(menu);

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PWD    = process.env.ADMIN_PASSWORD || "crepone2024";
-const SECRET = process.env.AUTH_SECRET    || "crepone-secret-key-2024";
-
 async function makeExpected() {
+  const PWD = process.env.ADMIN_PASSWORD;
+  const SECRET = process.env.AUTH_SECRET;
+  if (!PWD || !SECRET) return null;
+
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     "raw", enc.encode(SECRET), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
@@ -21,6 +22,7 @@ export async function middleware(req: NextRequest) {
   if (!token) return NextResponse.redirect(new URL("/admin/login", req.url));
 
   const expected = await makeExpected();
+  if (!expected) return NextResponse.redirect(new URL("/admin/login", req.url));
   if (token !== expected) return NextResponse.redirect(new URL("/admin/login", req.url));
 
   return NextResponse.next();

@@ -6,7 +6,6 @@ import {
   stripeLineItems,
   type CheckoutOrderRequest,
 } from "@/lib/checkoutOrder";
-import { savePendingStripeOrder } from "@/lib/pendingStripeOrders";
 
 export const runtime = "nodejs";
 
@@ -39,13 +38,10 @@ export async function POST(req: Request) {
       cancel_url: `${baseUrl}/?checkout=cancelled`,
       metadata: {
         externalId,
-        customerName: order.customer.name,
-        customerPhone: order.customer.phone ?? "",
         orderType: order.orderType,
+        requestedFor: order.requestedFor ?? "",
       },
     });
-
-    savePendingStripeOrder(session.id, order);
 
     return NextResponse.json({ url: session.url });
   } catch (err) {

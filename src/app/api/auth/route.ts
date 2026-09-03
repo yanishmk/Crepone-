@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
+import { isValidAdminPassword, makeAdminToken } from "@/lib/adminAuth";
 
-const PWD = process.env.ADMIN_PASSWORD || "crepone2024";
-const SECRET = process.env.AUTH_SECRET || "crepone-secret-key-2024";
+export const runtime = "nodejs";
 
-export function makeToken() {
-  return crypto.createHmac("sha256", SECRET).update(PWD).digest("hex");
-}
+export const makeToken = makeAdminToken;
 
 export async function POST(req: Request) {
   const { password, action } = await req.json();
@@ -17,15 +14,16 @@ export async function POST(req: Request) {
     return res;
   }
 
-  if (password !== PWD) {
+  if (!isValidAdminPassword(String(password ?? ""))) {
     return NextResponse.json({ error: "Mot de passe incorrect" }, { status: 401 });
   }
 
-  const token = makeToken();
+  const token = makeAdminToken();
   const res = NextResponse.json({ success: true });
   res.cookies.set("admin_token", token, {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
     maxAge: 60 * 60 * 24 * 7,
     path: "/",
   });

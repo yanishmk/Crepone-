@@ -25,6 +25,12 @@ Le panier utilise maintenant Stripe Checkout:
 3. Stripe confirme le paiement sur `POST /api/stripe/webhook`.
 4. Seulement apres paiement confirme, le site envoie la commande au hub Cluster POS avec `paymentStatus: paid_externally`.
 
+Le webhook est compatible Vercel/serverless: il reconstruit la commande depuis
+la session Stripe payee et les line items Stripe, puis recalcule les prix/UID
+POS depuis `data/menu.json`. L'ancien endpoint direct `POST /api/order` est
+desactive par defaut pour eviter les commandes non payees; l'activer seulement
+avec `ENABLE_PAY_AT_POS_ORDERS=true`.
+
 Variables a ajouter dans `.env.local`:
 
 ```bash
@@ -33,6 +39,7 @@ STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 CLUSTER_HUB_URL=http://localhost:3000
 CLUSTER_HUB_WEBSITE_API_KEY=...
+ENABLE_PAY_AT_POS_ORDERS=false
 ```
 
 En local, lancer le webhook Stripe:

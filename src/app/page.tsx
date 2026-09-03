@@ -431,6 +431,24 @@ export default function Home() {
   useEffect(() => {
     fetch("/api/menu").then((r) => r.json()).then(setMenu);
   }, []);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkout = params.get("checkout");
+    const message =
+      checkout === "success"
+        ? "Paiement reçu. Ta commande a été envoyée à CrepOne."
+        : checkout === "cancelled"
+          ? "Paiement annulé. Ton panier n'a pas été envoyé."
+          : null;
+    if (!message) return;
+
+    if (checkout === "success" || checkout === "cancelled") {
+      window.history.replaceState(null, "", window.location.pathname);
+      if (toastTimeout.current) clearTimeout(toastTimeout.current);
+      setTimeout(() => setToast(message), 0);
+      toastTimeout.current = setTimeout(() => setToast(null), 4200);
+    }
+  }, []);
 
   return (
     <main className="min-h-screen">
@@ -750,7 +768,6 @@ export default function Home() {
         cart={cart}
         updateQuantity={updateQuantity}
         removeFromCart={removeFromCart}
-        onOrderSuccess={() => setCart([])}
       />
 
       {toast && (
@@ -817,14 +834,12 @@ function CartDrawer({
   cart,
   updateQuantity,
   removeFromCart,
-  onOrderSuccess,
 }: {
   isOpen: boolean;
   onClose: () => void;
   cart: CartItem[];
   updateQuantity: (id: number, delta: number) => void;
   removeFromCart: (id: number) => void;
-  onOrderSuccess: () => void;
 }) {
   const [step, setStep] = useState<"cart" | "checkout" | "success">("cart");
   const [name, setName] = useState("");
@@ -875,7 +890,7 @@ function CartDrawer({
         requestedFor.setHours(h, m, 0, 0);
       }
 
-      const res = await fetch("/api/order", {
+      const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -883,20 +898,22 @@ function CartDrawer({
           orderType,
           requestedFor: requestedFor.toISOString(),
           items: cart.map((c) => ({
+            id: c.item.id,
             name: c.item.name,
-            price: c.item.price,
             quantity: c.quantity,
           })),
         }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || "La commande n'a pas pu être envoyée");
+        throw new Error(body.error || "Le paiement n'a pas pu démarrer");
       }
+      const body = (await res.json()) as { url?: string };
+      if (!body.url) throw new Error("Stripe n'a pas retourne d'URL de paiement");
+
       setReadyTime(requestedFor);
       setCustomerName(name);
-      setStep("success");
-      onOrderSuccess();
+      window.location.assign(body.url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
@@ -1140,7 +1157,7 @@ function CartDrawer({
                 disabled={submitting || !canSubmit}
                 className="flex-1 rounded-full bg-[#1e7a45] py-3 text-sm font-black transition-all hover:bg-[#196638] disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {submitting ? "Envoi…" : error ? "Réessayer" : "Confirmer la commande"}
+                {submitting ? "Paiement…" : error ? "Réessayer" : "Payer par carte"}
               </button>
             </div>
           </div>

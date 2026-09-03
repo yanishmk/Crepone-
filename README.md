@@ -16,6 +16,33 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Stripe checkout
+
+Le panier utilise maintenant Stripe Checkout:
+
+1. Le client clique sur `Payer par carte`.
+2. Le site cree une session Stripe via `POST /api/checkout`.
+3. Stripe confirme le paiement sur `POST /api/stripe/webhook`.
+4. Seulement apres paiement confirme, le site envoie la commande au hub Cluster POS avec `paymentStatus: paid_externally`.
+
+Variables a ajouter dans `.env.local`:
+
+```bash
+NEXT_PUBLIC_SITE_URL=http://localhost:3001
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+CLUSTER_HUB_URL=http://localhost:3000
+CLUSTER_HUB_WEBSITE_API_KEY=...
+```
+
+En local, lancer le webhook Stripe:
+
+```bash
+stripe listen --forward-to localhost:3001/api/stripe/webhook
+```
+
+Puis utiliser le `whsec_...` affiche par Stripe CLI comme `STRIPE_WEBHOOK_SECRET`.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

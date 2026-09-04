@@ -3,9 +3,6 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-const ORDER_URL =
-  "https://www.ubereats.com/ca-fr/store/crepone/Z1HdH29GWI6fRHH_3HRHZQ";
-
 const LOGO_URL = "/images/crepone-logo.jpg";
 
 // ── Google Maps reviews ───────────────────────────────────────────────────────
@@ -495,14 +492,13 @@ export default function Home() {
                 </span>
               )}
             </button>
-            <a
-              href={ORDER_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => setIsCartOpen(true)}
               className="rounded-full bg-[#1e7a45] px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-[#1e7a45]/25 transition-all hover:scale-105 hover:bg-[#196638]"
             >
               Commander
-            </a>
+            </button>
           </div>
         </div>
       </header>
@@ -548,14 +544,13 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href={ORDER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => setIsCartOpen(true)}
                 className="inline-flex min-h-[52px] items-center gap-2 rounded-full bg-[#1e7a45] px-8 py-4 text-sm font-black text-white shadow-xl shadow-[#0a241c]/25 transition-all hover:scale-105 hover:bg-[#196638]"
               >
-                Commander sur Uber Eats
-              </a>
+                Commander
+              </button>
               <a
                 href="#menu"
                 className="inline-flex min-h-[52px] items-center gap-2 rounded-full border border-white/24 bg-white/10 px-8 py-4 text-sm font-black text-white backdrop-blur transition-all hover:scale-105 hover:bg-white/16"
@@ -647,14 +642,13 @@ export default function Home() {
                 Ouvert <strong className="text-white">18h – 23h45</strong> · Tous les jours
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <a
-                  href={ORDER_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => setIsCartOpen(true)}
                   className="inline-flex h-12 items-center gap-2 rounded-full bg-[#1e7a45] px-7 text-sm font-black text-white shadow-lg shadow-black/25 transition-all hover:scale-105 hover:bg-[#196638]"
                 >
                   Commander maintenant
-                </a>
+                </button>
                 <a
                   href="https://maps.google.com/?q=668+Boulevard+Saint-Joseph+Gatineau+QC"
                   target="_blank"

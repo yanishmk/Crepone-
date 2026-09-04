@@ -88,9 +88,9 @@ async function orderFromPaidStripeSession(
   const customer = session.customer_details;
   const body: CheckoutOrderRequest = {
     customer: {
-      name: customer?.name || "Client Stripe",
-      phone: customer?.phone ?? undefined,
-      email: customer?.email ?? undefined,
+      name: customer?.name || session.metadata?.customerName || "Client Stripe",
+      phone: customer?.phone ?? session.metadata?.customerPhone ?? undefined,
+      email: customer?.email ?? session.metadata?.customerEmail ?? undefined,
     },
     orderType,
     requestedFor,

@@ -27,20 +27,30 @@ export async function POST(req: Request) {
     const externalId = `stripe-${crypto.randomUUID()}`;
     const order = createHubOrderPayload(body, externalId, "paid_externally");
     const baseUrl = siteUrl(req);
+    const customer = await stripe.customers.create({
+      name: order.customer.name,
+      email: order.customer.email,
+      phone: order.customer.phone,
+      metadata: {
+        externalId,
+        orderType: order.orderType,
+      },
+    });
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       line_items: stripeLineItems(order),
-      customer_email: order.customer.email,
-      customer_creation: "if_required",
-      phone_number_collection: { enabled: true },
+      customer: customer.id,
       success_url: `${baseUrl}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?checkout=cancelled`,
       metadata: {
         externalId,
         orderType: order.orderType,
         requestedFor: order.requestedFor ?? "",
+        customerName: order.customer.name,
+        customerPhone: order.customer.phone ?? "",
+        customerEmail: order.customer.email ?? "",
       },
     });
 

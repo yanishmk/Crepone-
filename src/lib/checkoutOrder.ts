@@ -11,7 +11,7 @@ export interface CheckoutOrderItemInput {
 }
 
 export interface CheckoutOrderRequest {
-  customer: { name: string; phone?: string };
+  customer: { name: string; phone?: string; email?: string };
   orderType: "pickup" | "dine_in";
   requestedFor?: string;
   items: CheckoutOrderItemInput[];
@@ -29,7 +29,7 @@ export interface HubOrderPayload {
   externalId: string;
   orderType: "pickup" | "dine_in";
   requestedFor?: string;
-  customer: { name: string; phone?: string };
+  customer: { name: string; phone?: string; email?: string };
   items: HubOrderItem[];
   subtotal: number;
   tax: number;
@@ -52,6 +52,9 @@ export function createHubOrderPayload(
 ): HubOrderPayload {
   if (!body.customer?.name?.trim()) {
     throw new Error("Le nom du client est requis");
+  }
+  if (!isValidEmail(body.customer.email)) {
+    throw new Error("Email client invalide");
   }
   if (!body.items?.length) {
     throw new Error("Le panier est vide");
@@ -106,6 +109,7 @@ export function createHubOrderPayload(
     customer: {
       name: body.customer.name.trim(),
       phone: body.customer.phone?.trim() || undefined,
+      email: body.customer.email?.trim().toLowerCase() || undefined,
     },
     items,
     subtotal,
@@ -157,4 +161,8 @@ function round2(n: number): number {
 
 function toCents(n: number): number {
   return Math.round(n * 100);
+}
+
+function isValidEmail(value: string | undefined): boolean {
+  return Boolean(value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()));
 }

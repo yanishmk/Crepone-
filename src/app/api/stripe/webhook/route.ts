@@ -90,6 +90,7 @@ async function orderFromPaidStripeSession(
     customer: {
       name: customer?.name || "Client Stripe",
       phone: customer?.phone ?? undefined,
+      email: customer?.email ?? undefined,
     },
     orderType,
     requestedFor,

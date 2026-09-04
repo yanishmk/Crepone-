@@ -844,6 +844,7 @@ function CartDrawer({
   const [step, setStep] = useState<"cart" | "checkout" | "success">("cart");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [orderType, setOrderType] = useState<OrderType>("pickup");
   const [pickupMode, setPickupMode] = useState<PickupMode>("asap");
   const [scheduledTime, setScheduledTime] = useState("");
@@ -861,7 +862,8 @@ function CartDrawer({
 
   const phoneDigits = phone.replace(/\D/g, "");
   const isPhoneValid = phoneDigits.length >= 7;
-  const canSubmit = name.trim().length > 0 && isPhoneValid;
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const canSubmit = name.trim().length > 0 && isPhoneValid && isEmailValid;
 
   if (!isOpen) return null;
 
@@ -894,7 +896,7 @@ function CartDrawer({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          customer: { name, phone },
+          customer: { name, phone, email },
           orderType,
           requestedFor: requestedFor.toISOString(),
           items: cart.map((c) => ({
@@ -929,6 +931,7 @@ function CartDrawer({
       setStep("cart");
       setName("");
       setPhone("");
+      setEmail("");
       setError(null);
     }, 200);
   }
@@ -1067,6 +1070,21 @@ function CartDrawer({
               {phone.length > 0 && !isPhoneValid && (
                 <p className="mt-1 text-xs font-bold text-amber-400">
                   Numéro de téléphone incomplet.
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-bold text-white/60">Email pour le reçu</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-lg bg-white/10 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#1e7a45]"
+                placeholder="nom@email.com"
+              />
+              {email.length > 0 && !isEmailValid && (
+                <p className="mt-1 text-xs font-bold text-amber-400">
+                  Adresse email invalide.
                 </p>
               )}
             </div>

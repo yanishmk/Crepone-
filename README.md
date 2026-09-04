@@ -22,8 +22,9 @@ Le panier utilise maintenant Stripe Checkout:
 
 1. Le client clique sur `Payer par carte`.
 2. Le site cree une session Stripe via `POST /api/checkout`.
-3. Stripe confirme le paiement sur `POST /api/stripe/webhook`.
-4. Seulement apres paiement confirme, le site envoie la commande au hub Cluster POS avec `paymentStatus: paid_externally`.
+3. Stripe utilise l'email client pour le recu de paiement.
+4. Stripe confirme le paiement sur `POST /api/stripe/webhook`.
+5. Seulement apres paiement confirme, le site envoie la commande au hub Cluster POS avec `paymentStatus: paid_externally`.
 
 Le webhook est compatible Vercel/serverless: il reconstruit la commande depuis
 la session Stripe payee et les line items Stripe, puis recalcule les prix/UID

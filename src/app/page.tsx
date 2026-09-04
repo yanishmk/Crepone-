@@ -1175,7 +1175,7 @@ function CartDrawer({
                 disabled={submitting || !canSubmit}
                 className="flex-1 rounded-full bg-[#1e7a45] py-3 text-sm font-black transition-all hover:bg-[#196638] disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {submitting ? "Paiement…" : error ? "Réessayer" : "Payer par carte"}
+                {submitting ? "Paiement…" : error ? "Réessayer" : "Payer maintenant"}
               </button>
             </div>
           </div>

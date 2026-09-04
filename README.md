@@ -51,6 +51,11 @@ stripe listen --forward-to localhost:3001/api/stripe/webhook
 
 Puis utiliser le `whsec_...` affiche par Stripe CLI comme `STRIPE_WEBHOOK_SECRET`.
 
+Dans Stripe Dashboard, activer les moyens de paiement voulus dans
+`Settings -> Payment methods`. Stripe Checkout affichera automatiquement les
+options disponibles pour le client, comme Apple Pay, Google Pay ou Link, lorsque
+son appareil/navigateur les supporte.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

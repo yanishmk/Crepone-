@@ -59,6 +59,21 @@ type PromotionForm = {
   freeItemId: number;
 };
 
+type CommercialAnalytics = {
+  totals: {
+    revenue: number;
+    orders: number;
+    averageOrder: number;
+    errors: number;
+    pending: number;
+    sentToPos: number;
+  };
+  sources: { source: string; orders: number; revenue: number }[];
+  bestSellers: { name: string; quantity: number; revenue: number }[];
+  daily: { date: string; orders: number; revenue: number }[];
+  recentOrders: { id: string; source: string; status: string; total: number; customerName: string; createdAt: string }[];
+};
+
 const EMPTY: Omit<MenuItem, "id"> = {
   category: "Crêpes Classiques",
   name: "",
@@ -280,6 +295,8 @@ export default function AdminPage() {
 
   const [menu, setMenu]         = useState<MenuItem[]>([]);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [analytics, setAnalytics] = useState<CommercialAnalytics | null>(null);
+  const [analyticsDays, setAnalyticsDays] = useState(30);
   const [promoForm, setPromoForm] = useState<PromotionForm>({
     name: "Promo 10%",
     type: "percent",
@@ -293,7 +310,7 @@ export default function AdminPage() {
     freeItemId: 0,
   });
   const [loading, setLoading]   = useState(true);
-  const [tab, setTab]           = useState<"products" | "stock" | "promos">("products");
+  const [tab, setTab]           = useState<"products" | "stock" | "promos" | "commercial">("products");
   const [filterCat, setFilterCat] = useState("Tout");
   const [search, setSearch]     = useState("");
   const [modal, setModal]       = useState<{ item: Partial<MenuItem> | null; open: boolean }>({ item: null, open: false });
@@ -310,6 +327,11 @@ export default function AdminPage() {
     if (res.ok) setPromotions(await res.json());
   }
 
+  async function fetchAnalytics(days = analyticsDays) {
+    const res = await fetch(`/api/commercial?days=${days}`);
+    if (res.ok) setAnalytics(await res.json());
+  }
+
   useEffect(() => {
     let active = true;
     void fetch("/api/menu")
@@ -323,6 +345,11 @@ export default function AdminPage() {
       .then((res) => res.ok ? res.json() : [])
       .then((items: Promotion[]) => {
         if (active) setPromotions(items);
+      });
+    void fetch("/api/commercial?days=30")
+      .then((res) => res.ok ? res.json() : null)
+      .then((data: CommercialAnalytics | null) => {
+        if (active) setAnalytics(data);
       });
     return () => { active = false; };
   }, []);
@@ -486,16 +513,16 @@ export default function AdminPage() {
 
         {/* Tabs */}
         <div className="flex items-center gap-2 mb-5">
-          {(["products", "stock", "promos"] as const).map(t => (
+          {(["commercial", "products", "stock", "promos"] as const).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${tab === t ? "bg-[#1e7a45] text-white shadow-sm" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
             >
-              {t === "products" ? "Produits" : t === "stock" ? "Stock" : "Promos"}
+              {t === "commercial" ? "Commercial" : t === "products" ? "Produits" : t === "stock" ? "Stock" : "Promos"}
             </button>
           ))}
-          {tab !== "promos" && (
+          {tab !== "promos" && tab !== "commercial" && (
             <button
               onClick={() => setModal({ item: null, open: true })}
               className="ml-auto rounded-xl bg-[#f5c518] px-5 py-2 text-sm font-black text-[#141414] shadow-sm hover:bg-[#eab308] transition-colors"
@@ -506,7 +533,7 @@ export default function AdminPage() {
         </div>
 
         {/* Filters */}
-        {tab !== "promos" && <div className="flex flex-wrap gap-3 mb-5">
+        {tab !== "promos" && tab !== "commercial" && <div className="flex flex-wrap gap-3 mb-5">
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -529,6 +556,106 @@ export default function AdminPage() {
         {/* Content */}
         {loading ? (
           <div className="text-center py-16 text-gray-400 font-medium">Chargement…</div>
+        ) : tab === "commercial" ? (
+          <div className="space-y-5">
+            <div className="flex flex-wrap items-center gap-2">
+              {[7, 30, 90].map((days) => (
+                <button
+                  key={days}
+                  onClick={() => {
+                    setAnalyticsDays(days);
+                    void fetchAnalytics(days);
+                  }}
+                  className={`rounded-xl px-4 py-2 text-sm font-bold ${analyticsDays === days ? "bg-[#1e7a45] text-white" : "border border-gray-200 bg-white text-gray-600"}`}
+                >
+                  {days} jours
+                </button>
+              ))}
+            </div>
+
+            {analytics ? (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                  {[
+                    ["Chiffre d'affaires", `$${analytics.totals.revenue.toFixed(2)}`],
+                    ["Commandes", analytics.totals.orders],
+                    ["Panier moyen", `$${analytics.totals.averageOrder.toFixed(2)}`],
+                    ["Envoyées POS", analytics.totals.sentToPos],
+                    ["Erreurs", analytics.totals.errors],
+                  ].map(([label, value]) => (
+                    <div key={label} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                      <p className="text-2xl font-black text-[#141414]">{value}</p>
+                      <p className="mt-1 text-xs font-bold uppercase tracking-wide text-gray-400">{label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid gap-5 lg:grid-cols-2">
+                  <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                    <h2 className="mb-4 text-lg font-black text-[#141414]">Meilleurs vendeurs</h2>
+                    <div className="space-y-3">
+                      {analytics.bestSellers.map((item, index) => (
+                        <div key={item.name} className="flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-bold text-[#141414]">{index + 1}. {item.name}</p>
+                            <p className="text-xs text-gray-400">{item.quantity} vendu(s)</p>
+                          </div>
+                          <p className="font-black text-[#1e7a45]">${item.revenue.toFixed(2)}</p>
+                        </div>
+                      ))}
+                      {analytics.bestSellers.length === 0 && <p className="text-sm font-bold text-gray-400">Aucune vente</p>}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                    <h2 className="mb-4 text-lg font-black text-[#141414]">Sources</h2>
+                    <div className="space-y-3">
+                      {analytics.sources.map((source) => (
+                        <div key={source.source} className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-bold uppercase text-[#141414]">{source.source}</p>
+                            <p className="text-xs text-gray-400">{source.orders} commande(s)</p>
+                          </div>
+                          <p className="font-black text-[#1e7a45]">${source.revenue.toFixed(2)}</p>
+                        </div>
+                      ))}
+                      {analytics.sources.length === 0 && <p className="text-sm font-bold text-gray-400">Aucune source</p>}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                  <h2 className="mb-4 text-lg font-black text-[#141414]">Dernières commandes</h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b text-left text-xs uppercase tracking-wide text-gray-400">
+                          <th className="py-2">Client</th>
+                          <th className="py-2">Source</th>
+                          <th className="py-2">Statut</th>
+                          <th className="py-2 text-right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {analytics.recentOrders.map((order) => (
+                          <tr key={order.id}>
+                            <td className="py-2 font-bold text-[#141414]">{order.customerName}</td>
+                            <td className="py-2 uppercase text-gray-500">{order.source}</td>
+                            <td className="py-2 text-gray-500">{order.status}</td>
+                            <td className="py-2 text-right font-black">${order.total.toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center font-bold text-gray-400">
+                Données commerciales indisponibles
+              </div>
+            )}
+          </div>
         ) : tab === "products" ? (
           /* Product table */
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">

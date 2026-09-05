@@ -26,6 +26,7 @@ export type Promotion =
       type: "percent";
       percentOff: number;
       minimumSubtotal?: number;
+      appliesToItemIds?: number[];
     }
   | {
       id: string;

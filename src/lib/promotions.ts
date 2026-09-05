@@ -39,7 +39,13 @@ export function applyPromotions(
     if (promo.type === "percent") {
       if (promo.minimumSubtotal && subtotal < promo.minimumSubtotal) continue;
       const percent = Math.max(0, Math.min(100, promo.percentOff));
-      const amount = round2(subtotal * (percent / 100));
+      const eligibleItemIds = new Set(promo.appliesToItemIds ?? []);
+      const eligibleSubtotal = round2(
+        items
+          .filter((item) => eligibleItemIds.size === 0 || eligibleItemIds.has(item.id))
+          .reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+      );
+      const amount = round2(eligibleSubtotal * (percent / 100));
       if (amount > 0) appliedPromotions.push({ id: promo.id, name: promo.name, amount });
     }
 

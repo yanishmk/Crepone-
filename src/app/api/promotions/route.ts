@@ -51,6 +51,7 @@ export function normalizePromotion(input: Record<string, unknown>): Promotion {
       type: "percent",
       percentOff: numberValue(input.percentOff, 10),
       minimumSubtotal: optionalNumber(input.minimumSubtotal),
+      appliesToItemIds: numberArray(input.appliesToItemIds),
     };
   }
 
@@ -80,4 +81,10 @@ function numberValue(value: unknown, fallback: number): number {
 function optionalNumber(value: unknown): number | undefined {
   if (value === undefined || value === null || value === "") return undefined;
   return numberValue(value, 0);
+}
+
+function numberArray(value: unknown): number[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const values = value.map(Number).filter((number) => Number.isInteger(number) && number > 0);
+  return values.length ? values : undefined;
 }

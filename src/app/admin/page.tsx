@@ -26,6 +26,7 @@ type Promotion =
       type: "percent";
       percentOff: number;
       minimumSubtotal?: number;
+      appliesToItemIds?: number[];
     }
   | {
       id: string;
@@ -51,6 +52,7 @@ type PromotionForm = {
   enabled: boolean;
   percentOff: number;
   minimumSubtotal: number;
+  appliesToItemIds: number[];
   itemId: number;
   buyQuantity: number;
   getQuantity: number;
@@ -284,6 +286,7 @@ export default function AdminPage() {
     enabled: true,
     percentOff: 10,
     minimumSubtotal: 0,
+    appliesToItemIds: [],
     itemId: 0,
     buyQuantity: 1,
     getQuantity: 1,
@@ -413,7 +416,10 @@ export default function AdminPage() {
 
   function describePromotion(promo: Promotion): string {
     if (promo.type === "percent") {
-      return `${promo.percentOff}% de rabais${promo.minimumSubtotal ? ` dès $${promo.minimumSubtotal}` : ""}`;
+      const scope = promo.appliesToItemIds?.length
+        ? `${promo.appliesToItemIds.length} produit(s)`
+        : "tout le menu";
+      return `${promo.percentOff}% de rabais sur ${scope}${promo.minimumSubtotal ? ` dès $${promo.minimumSubtotal}` : ""}`;
     }
     if (promo.type === "buy_get") {
       const item = menu.find((row) => row.id === promo.itemId);
@@ -654,6 +660,39 @@ export default function AdminPage() {
                       className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
                       placeholder="Montant minimum"
                     />
+                    <div className="rounded-xl border border-gray-200 p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <p className="text-xs font-black uppercase tracking-wide text-gray-500">Produits ciblés</p>
+                        <button
+                          type="button"
+                          onClick={() => setPromoForm((f) => ({ ...f, appliesToItemIds: [] }))}
+                          className="text-xs font-bold text-[#1e7a45]"
+                        >
+                          Tout le menu
+                        </button>
+                      </div>
+                      <div className="max-h-44 space-y-1 overflow-y-auto pr-1">
+                        {menu.map((item) => {
+                          const checked = promoForm.appliesToItemIds.includes(item.id);
+                          return (
+                            <label key={item.id} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-gray-50">
+                              <input
+                                type="checkbox"
+                                checked={checked}
+                                onChange={(e) => setPromoForm((f) => ({
+                                  ...f,
+                                  appliesToItemIds: e.target.checked
+                                    ? [...f.appliesToItemIds, item.id]
+                                    : f.appliesToItemIds.filter((id) => id !== item.id),
+                                }))}
+                                className="h-4 w-4 accent-[#1e7a45]"
+                              />
+                              <span className="truncate">{item.name}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </>
                 )}
 

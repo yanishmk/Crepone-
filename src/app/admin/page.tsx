@@ -329,14 +329,18 @@ export default function AdminPage() {
   }
 
   async function fetchAnalytics(days = analyticsDays) {
-    const res = await fetch(`/api/commercial?days=${days}`);
-    if (res.ok) {
-      setAnalytics(await res.json());
-      setAnalyticsError(null);
-    } else {
-      const json = await res.json().catch(() => null) as { error?: string; details?: string } | null;
+    try {
+      const res = await fetch(`/api/commercial?days=${days}`, { cache: "no-store" });
+      if (res.ok) {
+        setAnalytics(await res.json());
+        setAnalyticsError(null);
+      } else {
+        setAnalytics(null);
+        setAnalyticsError(await readCommercialError(res));
+      }
+    } catch (err) {
       setAnalytics(null);
-      setAnalyticsError(json?.details || json?.error || "Données commerciales indisponibles");
+      setAnalyticsError(err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -354,11 +358,13 @@ export default function AdminPage() {
       .then((items: Promotion[]) => {
         if (active) setPromotions(items);
       });
-    void fetch("/api/commercial?days=30")
+    void fetch("/api/commercial?days=30", { cache: "no-store" })
       .then(async (res) => {
         if (res.ok) return { data: await res.json() as CommercialAnalytics, error: null };
-        const json = await res.json().catch(() => null) as { error?: string; details?: string } | null;
-        return { data: null, error: json?.details || json?.error || "Données commerciales indisponibles" };
+        return { data: null, error: await readCommercialError(res) };
+      })
+      .catch((err) => {
+        return { data: null, error: err instanceof Error ? err.message : String(err) };
       })
       .then(({ data, error }) => {
         if (!active) return;
@@ -468,6 +474,16 @@ export default function AdminPage() {
     }
     const freeItem = menu.find((row) => row.id === promo.freeItemId);
     return `${freeItem?.name ?? "Article"} gratuit dès $${promo.minimumSubtotal}`;
+  }
+
+  async function readCommercialError(res: Response): Promise<string> {
+    const text = await res.text().catch(() => "");
+    try {
+      const json = JSON.parse(text) as { error?: string; details?: string };
+      return json.details || json.error || `${res.status} ${res.statusText || "Erreur inconnue"}`;
+    } catch {
+      return text ? `${res.status} ${text.slice(0, 500)}` : `${res.status} ${res.statusText || "Erreur inconnue"}`;
+    }
   }
 
   const categories = ["Tout", ...CATEGORIES];

@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import {
   createHubOrderPayload,
+  type HubOrderPayload,
   type CheckoutOrderItemInput,
   type CheckoutOrderRequest,
 } from "@/lib/checkoutOrder";
-import { readMenu } from "@/lib/menuStore";
+import { readMenu, readPendingOrder, readPromotions } from "@/lib/menuStore";
 
 export const runtime = "nodejs";
 
@@ -75,6 +76,9 @@ async function orderFromPaidStripeSession(
   session: Stripe.Checkout.Session
 ) {
   const externalId = session.metadata?.externalId || `stripe-${session.id}`;
+  const pendingOrder = await readPendingOrder<HubOrderPayload>(externalId);
+  if (pendingOrder) return pendingOrder;
+
   const orderType = session.metadata?.orderType === "dine_in" ? "dine_in" : "pickup";
   const requestedFor = session.metadata?.requestedFor || undefined;
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
@@ -99,5 +103,6 @@ async function orderFromPaidStripeSession(
   };
 
   const menu = await readMenu();
-  return createHubOrderPayload(body, externalId, "paid_externally", menu);
+  const promotions = await readPromotions();
+  return createHubOrderPayload(body, externalId, "paid_externally", menu, promotions);
 }

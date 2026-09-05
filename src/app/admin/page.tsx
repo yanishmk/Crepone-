@@ -18,6 +18,45 @@ type MenuItem = {
   inStock: boolean;
 };
 
+type Promotion =
+  | {
+      id: string;
+      enabled: boolean;
+      name: string;
+      type: "percent";
+      percentOff: number;
+      minimumSubtotal?: number;
+    }
+  | {
+      id: string;
+      enabled: boolean;
+      name: string;
+      type: "buy_get";
+      itemId: number;
+      buyQuantity: number;
+      getQuantity: number;
+    }
+  | {
+      id: string;
+      enabled: boolean;
+      name: string;
+      type: "free_item_threshold";
+      freeItemId: number;
+      minimumSubtotal: number;
+    };
+
+type PromotionForm = {
+  name: string;
+  type: Promotion["type"];
+  enabled: boolean;
+  percentOff: number;
+  minimumSubtotal: number;
+  itemId: number;
+  buyQuantity: number;
+  getQuantity: number;
+  freeItemId: number;
+};
+
 const EMPTY: Omit<MenuItem, "id"> = {
   category: "Crêpes Classiques",
   name: "",
@@ -238,8 +277,20 @@ export default function AdminPage() {
   const { toast, show } = useToast();
 
   const [menu, setMenu]         = useState<MenuItem[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [promoForm, setPromoForm] = useState<PromotionForm>({
+    name: "Promo 10%",
+    type: "percent",
+    enabled: true,
+    percentOff: 10,
+    minimumSubtotal: 0,
+    itemId: 0,
+    buyQuantity: 1,
+    getQuantity: 1,
+    freeItemId: 0,
+  });
   const [loading, setLoading]   = useState(true);
-  const [tab, setTab]           = useState<"products" | "stock">("products");
+  const [tab, setTab]           = useState<"products" | "stock" | "promos">("products");
   const [filterCat, setFilterCat] = useState("Tout");
   const [search, setSearch]     = useState("");
   const [modal, setModal]       = useState<{ item: Partial<MenuItem> | null; open: boolean }>({ item: null, open: false });
@@ -250,6 +301,12 @@ export default function AdminPage() {
     setMenu(await res.json());
     setLoading(false);
   }
+
+  async function fetchPromotions() {
+    const res = await fetch("/api/promotions");
+    if (res.ok) setPromotions(await res.json());
+  }
+
   useEffect(() => {
     let active = true;
     void fetch("/api/menu")
@@ -258,6 +315,11 @@ export default function AdminPage() {
         if (!active) return;
         setMenu(items);
         setLoading(false);
+      });
+    void fetch("/api/promotions")
+      .then((res) => res.ok ? res.json() : [])
+      .then((items: Promotion[]) => {
+        if (active) setPromotions(items);
       });
     return () => { active = false; };
   }, []);
@@ -301,6 +363,64 @@ export default function AdminPage() {
       const json = await res.json().catch(() => null) as { error?: string } | null;
       show(json?.error ?? "Erreur stock", "err");
     }
+  }
+
+  async function savePromotion() {
+    const firstItem = menu[0];
+    const payload = {
+      ...promoForm,
+      itemId: promoForm.itemId || firstItem?.id || 0,
+      freeItemId: promoForm.freeItemId || firstItem?.id || 0,
+      minimumSubtotal: promoForm.minimumSubtotal || 0,
+    };
+    const res = await fetch("/api/promotions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      await fetchPromotions();
+      show("Promotion ajoutée");
+    } else {
+      const json = await res.json().catch(() => null) as { error?: string } | null;
+      show(json?.error ?? "Erreur promotion", "err");
+    }
+  }
+
+  async function updatePromotion(id: string, patch: Partial<Promotion>) {
+    const res = await fetch(`/api/promotions/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    });
+    if (res.ok) {
+      await fetchPromotions();
+      show("Promotion modifiée");
+    } else {
+      show("Erreur promotion", "err");
+    }
+  }
+
+  async function deletePromotion(id: string) {
+    const res = await fetch(`/api/promotions/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      await fetchPromotions();
+      show("Promotion supprimée");
+    } else {
+      show("Erreur suppression", "err");
+    }
+  }
+
+  function describePromotion(promo: Promotion): string {
+    if (promo.type === "percent") {
+      return `${promo.percentOff}% de rabais${promo.minimumSubtotal ? ` dès $${promo.minimumSubtotal}` : ""}`;
+    }
+    if (promo.type === "buy_get") {
+      const item = menu.find((row) => row.id === promo.itemId);
+      return `Acheter ${promo.buyQuantity}, obtenir ${promo.getQuantity} gratuit: ${item?.name ?? "article"}`;
+    }
+    const freeItem = menu.find((row) => row.id === promo.freeItemId);
+    return `${freeItem?.name ?? "Article"} gratuit dès $${promo.minimumSubtotal}`;
   }
 
   const categories = ["Tout", ...CATEGORIES];
@@ -360,25 +480,27 @@ export default function AdminPage() {
 
         {/* Tabs */}
         <div className="flex items-center gap-2 mb-5">
-          {(["products", "stock"] as const).map(t => (
+          {(["products", "stock", "promos"] as const).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${tab === t ? "bg-[#1e7a45] text-white shadow-sm" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
             >
-              {t === "products" ? "📋 Produits" : "📦 Stock"}
+              {t === "products" ? "Produits" : t === "stock" ? "Stock" : "Promos"}
             </button>
           ))}
-          <button
-            onClick={() => setModal({ item: null, open: true })}
-            className="ml-auto rounded-xl bg-[#f5c518] px-5 py-2 text-sm font-black text-[#141414] shadow-sm hover:bg-[#eab308] transition-colors"
-          >
-            + Ajouter un produit
-          </button>
+          {tab !== "promos" && (
+            <button
+              onClick={() => setModal({ item: null, open: true })}
+              className="ml-auto rounded-xl bg-[#f5c518] px-5 py-2 text-sm font-black text-[#141414] shadow-sm hover:bg-[#eab308] transition-colors"
+            >
+              + Ajouter un produit
+            </button>
+          )}
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-5">
+        {tab !== "promos" && <div className="flex flex-wrap gap-3 mb-5">
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -396,7 +518,7 @@ export default function AdminPage() {
               </button>
             ))}
           </div>
-        </div>
+        </div>}
 
         {/* Content */}
         {loading ? (
@@ -470,7 +592,7 @@ export default function AdminPage() {
               {filtered.length} produit{filtered.length !== 1 ? "s" : ""} affiché{filtered.length !== 1 ? "s" : ""}
             </div>
           </div>
-        ) : (
+        ) : tab === "stock" ? (
           /* Stock view */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {filtered.map(item => (
@@ -491,6 +613,146 @@ export default function AdminPage() {
                 </button>
               </div>
             ))}
+          </div>
+        ) : (
+          <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
+            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <h2 className="mb-4 text-lg font-black text-[#141414]">Nouvelle promotion</h2>
+              <div className="space-y-3">
+                <input
+                  value={promoForm.name}
+                  onChange={(e) => setPromoForm((f) => ({ ...f, name: e.target.value }))}
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                  placeholder="Nom de la promotion"
+                />
+                <select
+                  value={promoForm.type}
+                  onChange={(e) => setPromoForm((f) => ({ ...f, type: e.target.value as Promotion["type"] }))}
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                >
+                  <option value="percent">Rabais en pourcentage</option>
+                  <option value="buy_get">Acheter X obtenir Y</option>
+                  <option value="free_item_threshold">Article gratuit dès montant</option>
+                </select>
+
+                {promoForm.type === "percent" && (
+                  <>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={promoForm.percentOff}
+                      onChange={(e) => setPromoForm((f) => ({ ...f, percentOff: Number(e.target.value) }))}
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                      placeholder="Pourcentage"
+                    />
+                    <input
+                      type="number"
+                      min="0"
+                      value={promoForm.minimumSubtotal}
+                      onChange={(e) => setPromoForm((f) => ({ ...f, minimumSubtotal: Number(e.target.value) }))}
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                      placeholder="Montant minimum"
+                    />
+                  </>
+                )}
+
+                {promoForm.type === "buy_get" && (
+                  <>
+                    <select
+                      value={promoForm.itemId || menu[0]?.id || 0}
+                      onChange={(e) => setPromoForm((f) => ({ ...f, itemId: Number(e.target.value) }))}
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                    >
+                      {menu.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                    </select>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="number"
+                        min="1"
+                        value={promoForm.buyQuantity}
+                        onChange={(e) => setPromoForm((f) => ({ ...f, buyQuantity: Number(e.target.value) }))}
+                        className="rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                        placeholder="Acheter"
+                      />
+                      <input
+                        type="number"
+                        min="1"
+                        value={promoForm.getQuantity}
+                        onChange={(e) => setPromoForm((f) => ({ ...f, getQuantity: Number(e.target.value) }))}
+                        className="rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                        placeholder="Gratuit"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {promoForm.type === "free_item_threshold" && (
+                  <>
+                    <select
+                      value={promoForm.freeItemId || menu[0]?.id || 0}
+                      onChange={(e) => setPromoForm((f) => ({ ...f, freeItemId: Number(e.target.value) }))}
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                    >
+                      {menu.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                    </select>
+                    <input
+                      type="number"
+                      min="0"
+                      value={promoForm.minimumSubtotal}
+                      onChange={(e) => setPromoForm((f) => ({ ...f, minimumSubtotal: Number(e.target.value) }))}
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1e7a45]"
+                      placeholder="Commande minimum"
+                    />
+                  </>
+                )}
+
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={promoForm.enabled}
+                    onChange={(e) => setPromoForm((f) => ({ ...f, enabled: e.target.checked }))}
+                    className="h-4 w-4 accent-[#1e7a45]"
+                  />
+                  Active
+                </label>
+                <button
+                  onClick={savePromotion}
+                  className="w-full rounded-xl bg-[#1e7a45] px-4 py-2.5 text-sm font-black text-white hover:bg-[#196638]"
+                >
+                  Ajouter promotion
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {promotions.map((promo) => (
+                <div key={promo.id} className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                  <div className="flex-1">
+                    <p className="font-black text-[#141414]">{promo.name}</p>
+                    <p className="text-sm text-gray-500">{describePromotion(promo)}</p>
+                  </div>
+                  <button
+                    onClick={() => updatePromotion(promo.id, { enabled: !promo.enabled })}
+                    className={`rounded-full px-3 py-1 text-xs font-black ${promo.enabled ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
+                  >
+                    {promo.enabled ? "Active" : "Inactive"}
+                  </button>
+                  <button
+                    onClick={() => deletePromotion(promo.id)}
+                    className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                    title="Supprimer"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              ))}
+              {promotions.length === 0 && (
+                <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center font-bold text-gray-400">
+                  Aucune promotion
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

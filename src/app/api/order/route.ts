@@ -4,7 +4,7 @@ import {
   createHubOrderPayload,
   type CheckoutOrderRequest,
 } from "@/lib/checkoutOrder";
-import { readMenu } from "@/lib/menuStore";
+import { readMenu, readPromotions } from "@/lib/menuStore";
 
 const HUB_URL = process.env.CLUSTER_HUB_URL || "http://localhost:3000";
 const HUB_API_KEY = process.env.CLUSTER_HUB_WEBSITE_API_KEY || "";
@@ -22,7 +22,8 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as CheckoutOrderRequest;
     const menu = await readMenu();
-    const payload = createHubOrderPayload(body, crypto.randomUUID(), "pay_at_pos", menu);
+    const promotions = await readPromotions();
+    const payload = createHubOrderPayload(body, crypto.randomUUID(), "pay_at_pos", menu, promotions);
 
     const hubRes = await fetch(`${HUB_URL}/orders/website`, {
       method: "POST",

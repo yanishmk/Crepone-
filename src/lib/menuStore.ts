@@ -18,8 +18,36 @@ export interface MenuItem {
   clusterItemUid?: number;
 }
 
+export type Promotion =
+  | {
+      id: string;
+      enabled: boolean;
+      name: string;
+      type: "percent";
+      percentOff: number;
+      minimumSubtotal?: number;
+    }
+  | {
+      id: string;
+      enabled: boolean;
+      name: string;
+      type: "buy_get";
+      itemId: number;
+      buyQuantity: number;
+      getQuantity: number;
+    }
+  | {
+      id: string;
+      enabled: boolean;
+      name: string;
+      type: "free_item_threshold";
+      freeItemId: number;
+      minimumSubtotal: number;
+    };
+
 const MENU_PATH = path.join(process.cwd(), "data", "menu.json");
 const MENU_KEY = "menu";
+const PROMOTIONS_KEY = "promotions";
 
 let sqlClient: postgres.Sql | null = null;
 
@@ -108,4 +136,51 @@ export async function writeMenu(menu: MenuItem[]) {
     ON CONFLICT (key) DO UPDATE
     SET value = EXCLUDED.value, updated_at = now()
   `;
+}
+
+export async function readPromotions(): Promise<Promotion[]> {
+  if (!hasDatabase()) return [];
+
+  await ensureMenuTable();
+  const rows = await sql()<[{ value: Promotion[] }]>`
+    SELECT value FROM crepone_store WHERE key = ${PROMOTIONS_KEY}
+  `;
+  return rows[0]?.value ?? [];
+}
+
+export async function writePromotions(promotions: Promotion[]) {
+  if (!hasDatabase()) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("DATABASE_URL is required to persist promotions in production");
+    }
+    return;
+  }
+
+  await ensureMenuTable();
+  await sql()`
+    INSERT INTO crepone_store (key, value, updated_at)
+    VALUES (${PROMOTIONS_KEY}, ${sql().json(promotions as unknown as JSONValue)}, now())
+    ON CONFLICT (key) DO UPDATE
+    SET value = EXCLUDED.value, updated_at = now()
+  `;
+}
+
+export async function writePendingOrder(externalId: string, order: unknown) {
+  if (!hasDatabase()) return;
+  await ensureMenuTable();
+  await sql()`
+    INSERT INTO crepone_store (key, value, updated_at)
+    VALUES (${`pending_order_${externalId}`}, ${sql().json(order as JSONValue)}, now())
+    ON CONFLICT (key) DO UPDATE
+    SET value = EXCLUDED.value, updated_at = now()
+  `;
+}
+
+export async function readPendingOrder<T>(externalId: string): Promise<T | null> {
+  if (!hasDatabase()) return null;
+  await ensureMenuTable();
+  const rows = await sql()<[{ value: T }]>`
+    SELECT value FROM crepone_store WHERE key = ${`pending_order_${externalId}`}
+  `;
+  return rows[0]?.value ?? null;
 }

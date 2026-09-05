@@ -6,7 +6,7 @@ import {
   stripeLineItems,
   type CheckoutOrderRequest,
 } from "@/lib/checkoutOrder";
-import { readMenu } from "@/lib/menuStore";
+import { readMenu, readPromotions, writePendingOrder } from "@/lib/menuStore";
 
 export const runtime = "nodejs";
 
@@ -27,7 +27,8 @@ export async function POST(req: Request) {
     const body = (await req.json()) as CheckoutOrderRequest;
     const externalId = `stripe-${crypto.randomUUID()}`;
     const menu = await readMenu();
-    const order = createHubOrderPayload(body, externalId, "paid_externally", menu);
+    const promotions = await readPromotions();
+    const order = createHubOrderPayload(body, externalId, "paid_externally", menu, promotions);
     const baseUrl = siteUrl(req);
     const customer = await stripe.customers.create({
       name: order.customer.name,
@@ -55,6 +56,7 @@ export async function POST(req: Request) {
         customerEmail: order.customer.email ?? "",
       },
     });
+    await writePendingOrder(externalId, order);
 
     return NextResponse.json({ url: session.url });
   } catch (err) {

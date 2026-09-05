@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { calculatePromotionPreview } from "@/lib/promotions";
+import type { Promotion } from "@/lib/menuStore";
 
 const LOGO_URL = "/images/crepone-logo.jpg";
 
@@ -425,8 +427,10 @@ export default function Home() {
   };
 
   const [menu, setMenu] = useState<MenuItem[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   useEffect(() => {
     fetch("/api/menu").then((r) => r.json()).then(setMenu);
+    fetch("/api/promotions").then((r) => r.ok ? r.json() : []).then(setPromotions);
   }, []);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -760,6 +764,8 @@ export default function Home() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         cart={cart}
+        menu={menu}
+        promotions={promotions}
         updateQuantity={updateQuantity}
         removeFromCart={removeFromCart}
       />
@@ -826,12 +832,16 @@ function CartDrawer({
   isOpen,
   onClose,
   cart,
+  menu,
+  promotions,
   updateQuantity,
   removeFromCart,
 }: {
   isOpen: boolean;
   onClose: () => void;
   cart: CartItem[];
+  menu: MenuItem[];
+  promotions: Promotion[];
   updateQuantity: (id: number, delta: number) => void;
   removeFromCart: (id: number) => void;
 }) {
@@ -851,8 +861,11 @@ function CartDrawer({
     (sum, c) => sum + parsePriceValue(c.item.price) * c.quantity,
     0
   );
-  const taxPreview = subtotal * TAX_RATE_PREVIEW;
-  const totalPreview = subtotal + taxPreview;
+  const promotionPreview = calculatePromotionPreview(cart, promotions, menu);
+  const discountPreview = promotionPreview.discountTotal;
+  const discountedSubtotal = Math.max(0, subtotal - discountPreview);
+  const taxPreview = discountedSubtotal * TAX_RATE_PREVIEW;
+  const totalPreview = discountedSubtotal + taxPreview;
 
   const phoneDigits = phone.replace(/\D/g, "");
   const isPhoneValid = phoneDigits.length >= 7;
@@ -1023,6 +1036,12 @@ function CartDrawer({
                   <span>Sous-total</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
+                {discountPreview > 0 && (
+                  <div className="flex justify-between text-[#f5c518]">
+                    <span>Promotion</span>
+                    <span>-${discountPreview.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-white/60">
                   <span>Taxes (TPS + TVQ)</span>
                   <span>${taxPreview.toFixed(2)}</span>

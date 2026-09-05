@@ -5,7 +5,14 @@ import { readMenu, writeMenu } from "@/lib/menuStore";
 export const runtime = "nodejs";
 
 export async function GET() {
-  return NextResponse.json(await readMenu());
+  try {
+    return NextResponse.json(await readMenu());
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Unable to read menu" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req: Request) {

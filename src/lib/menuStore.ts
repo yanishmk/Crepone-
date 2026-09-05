@@ -33,6 +33,7 @@ function sql() {
   }
   sqlClient ??= postgres(process.env.DATABASE_URL, {
     max: 1,
+    prepare: false,
     ssl: process.env.NODE_ENV === "production" ? "require" : undefined,
   });
   return sqlClient;

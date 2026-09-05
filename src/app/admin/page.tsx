@@ -296,6 +296,7 @@ export default function AdminPage() {
   const [menu, setMenu]         = useState<MenuItem[]>([]);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [analytics, setAnalytics] = useState<CommercialAnalytics | null>(null);
+  const [analyticsError, setAnalyticsError] = useState<string | null>(null);
   const [analyticsDays, setAnalyticsDays] = useState(30);
   const [promoForm, setPromoForm] = useState<PromotionForm>({
     name: "Promo 10%",
@@ -329,7 +330,14 @@ export default function AdminPage() {
 
   async function fetchAnalytics(days = analyticsDays) {
     const res = await fetch(`/api/commercial?days=${days}`);
-    if (res.ok) setAnalytics(await res.json());
+    if (res.ok) {
+      setAnalytics(await res.json());
+      setAnalyticsError(null);
+    } else {
+      const json = await res.json().catch(() => null) as { error?: string; details?: string } | null;
+      setAnalytics(null);
+      setAnalyticsError(json?.details || json?.error || "Données commerciales indisponibles");
+    }
   }
 
   useEffect(() => {
@@ -347,9 +355,15 @@ export default function AdminPage() {
         if (active) setPromotions(items);
       });
     void fetch("/api/commercial?days=30")
-      .then((res) => res.ok ? res.json() : null)
-      .then((data: CommercialAnalytics | null) => {
-        if (active) setAnalytics(data);
+      .then(async (res) => {
+        if (res.ok) return { data: await res.json() as CommercialAnalytics, error: null };
+        const json = await res.json().catch(() => null) as { error?: string; details?: string } | null;
+        return { data: null, error: json?.details || json?.error || "Données commerciales indisponibles" };
+      })
+      .then(({ data, error }) => {
+        if (!active) return;
+        setAnalytics(data);
+        setAnalyticsError(error);
       });
     return () => { active = false; };
   }, []);
@@ -651,8 +665,17 @@ export default function AdminPage() {
                 </div>
               </>
             ) : (
-              <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center font-bold text-gray-400">
-                Données commerciales indisponibles
+              <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
+                <p className="font-black text-[#141414]">Données commerciales indisponibles</p>
+                {analyticsError && (
+                  <p className="mx-auto mt-2 max-w-xl text-sm font-semibold text-red-500">{analyticsError}</p>
+                )}
+                <button
+                  onClick={() => void fetchAnalytics()}
+                  className="mt-4 rounded-xl bg-[#1e7a45] px-4 py-2 text-sm font-black text-white hover:bg-[#196638]"
+                >
+                  Actualiser
+                </button>
               </div>
             )}
           </div>

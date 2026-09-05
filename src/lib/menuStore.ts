@@ -31,12 +31,32 @@ function sql() {
   if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not configured");
   }
-  sqlClient ??= postgres(process.env.DATABASE_URL, {
+  sqlClient ??= postgres(normalizeDatabaseUrl(process.env.DATABASE_URL), {
     max: 1,
     prepare: false,
     ssl: process.env.NODE_ENV === "production" ? "require" : undefined,
   });
   return sqlClient;
+}
+
+function normalizeDatabaseUrl(value: string): string {
+  let url = value.trim().replace(/^DATABASE_URL=/, "").trim();
+  url = url.replace(/^["']|["']$/g, "");
+
+  const match = url.match(/^(postgres(?:ql)?:\/\/[^:]+:)(.*)(@[^/@]+:\d+\/.*)$/);
+  if (!match) return url;
+
+  const [, prefix, rawPassword, suffix] = match;
+  const password = rawPassword.replace(/^\[(.*)]$/, "$1");
+  return `${prefix}${encodeURIComponent(decodeURIComponentSafe(password))}${suffix}`;
+}
+
+function decodeURIComponentSafe(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
 
 function readFileMenu(): MenuItem[] {

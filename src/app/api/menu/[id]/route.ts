@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import { isAdminRequest } from "@/lib/adminAuth";
-
-const DATA = path.join(process.cwd(), "data", "menu.json");
-
-function read() { return JSON.parse(fs.readFileSync(DATA, "utf-8")); }
-function write(d: unknown) { fs.writeFileSync(DATA, JSON.stringify(d, null, 2)); }
+import { readMenu, writeMenu } from "@/lib/menuStore";
 
 export const runtime = "nodejs";
 
@@ -15,14 +9,21 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
-  const body = await req.json();
-  const menu = read();
-  const idx = menu.findIndex((m: { id: number }) => m.id === parseInt(id));
-  if (idx === -1) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  menu[idx] = { ...menu[idx], ...body };
-  write(menu);
-  return NextResponse.json(menu[idx]);
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const menu = await readMenu();
+    const idx = menu.findIndex((m: { id: number }) => m.id === parseInt(id));
+    if (idx === -1) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    menu[idx] = { ...menu[idx], ...body };
+    await writeMenu(menu);
+    return NextResponse.json(menu[idx]);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Unable to update menu item" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -30,8 +31,15 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
-  const menu = read().filter((m: { id: number }) => m.id !== parseInt(id));
-  write(menu);
-  return NextResponse.json({ success: true });
+  try {
+    const { id } = await params;
+    const menu = (await readMenu()).filter((m: { id: number }) => m.id !== parseInt(id));
+    await writeMenu(menu);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Unable to delete menu item" },
+      { status: 500 }
+    );
+  }
 }

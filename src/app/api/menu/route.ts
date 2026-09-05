@@ -1,17 +1,11 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import { isAdminRequest } from "@/lib/adminAuth";
-
-const DATA = path.join(process.cwd(), "data", "menu.json");
-
-function read() { return JSON.parse(fs.readFileSync(DATA, "utf-8")); }
-function write(d: unknown) { fs.writeFileSync(DATA, JSON.stringify(d, null, 2)); }
+import { readMenu, writeMenu } from "@/lib/menuStore";
 
 export const runtime = "nodejs";
 
 export async function GET() {
-  return NextResponse.json(read());
+  return NextResponse.json(await readMenu());
 }
 
 export async function POST(req: Request) {
@@ -19,11 +13,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const menu = read();
-  const id = menu.length ? Math.max(...menu.map((m: { id: number }) => m.id)) + 1 : 1;
-  const item = { ...body, id, inStock: body.inStock ?? true };
-  menu.push(item);
-  write(menu);
-  return NextResponse.json(item, { status: 201 });
+  try {
+    const body = await req.json();
+    const menu = await readMenu();
+    const id = menu.length ? Math.max(...menu.map((m: { id: number }) => m.id)) + 1 : 1;
+    const item = { ...body, id, inStock: body.inStock ?? true };
+    menu.push(item);
+    await writeMenu(menu);
+    return NextResponse.json(item, { status: 201 });
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Unable to save menu item" },
+      { status: 500 }
+    );
+  }
 }

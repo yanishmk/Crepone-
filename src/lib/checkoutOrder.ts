@@ -1,7 +1,5 @@
-import fs from "fs";
-import path from "path";
+import type { MenuItem } from "./menuStore";
 
-const MENU_PATH = path.join(process.cwd(), "data", "menu.json");
 const QC_TAX_RATE = 0.14975;
 
 export interface CheckoutOrderItemInput {
@@ -37,18 +35,11 @@ export interface HubOrderPayload {
   paymentStatus: "pay_at_pos" | "paid_externally";
 }
 
-interface MenuItem {
-  id: number;
-  name: string;
-  price: string;
-  inStock?: boolean;
-  clusterItemUid?: number;
-}
-
 export function createHubOrderPayload(
   body: CheckoutOrderRequest,
   externalId: string,
-  paymentStatus: HubOrderPayload["paymentStatus"]
+  paymentStatus: HubOrderPayload["paymentStatus"],
+  menu: MenuItem[]
 ): HubOrderPayload {
   if (!body.customer?.name?.trim()) {
     throw new Error("Le nom du client est requis");
@@ -63,7 +54,6 @@ export function createHubOrderPayload(
     throw new Error("Type de commande invalide");
   }
 
-  const menu = readMenu();
   const byId = new Map(menu.map((item) => [item.id, item]));
   const byName = new Map(menu.map((item) => [item.name, item]));
 
@@ -141,10 +131,6 @@ export function stripeLineItems(order: HubOrderPayload) {
   }
 
   return lineItems;
-}
-
-function readMenu(): MenuItem[] {
-  return JSON.parse(fs.readFileSync(MENU_PATH, "utf-8")) as MenuItem[];
 }
 
 function parsePrice(price: string): number {

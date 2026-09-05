@@ -6,6 +6,7 @@ import {
   stripeLineItems,
   type CheckoutOrderRequest,
 } from "@/lib/checkoutOrder";
+import { readMenu } from "@/lib/menuStore";
 
 export const runtime = "nodejs";
 
@@ -25,7 +26,8 @@ export async function POST(req: Request) {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const body = (await req.json()) as CheckoutOrderRequest;
     const externalId = `stripe-${crypto.randomUUID()}`;
-    const order = createHubOrderPayload(body, externalId, "paid_externally");
+    const menu = await readMenu();
+    const order = createHubOrderPayload(body, externalId, "paid_externally", menu);
     const baseUrl = siteUrl(req);
     const customer = await stripe.customers.create({
       name: order.customer.name,

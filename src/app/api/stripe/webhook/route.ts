@@ -5,6 +5,7 @@ import {
   type CheckoutOrderItemInput,
   type CheckoutOrderRequest,
 } from "@/lib/checkoutOrder";
+import { readMenu } from "@/lib/menuStore";
 
 export const runtime = "nodejs";
 
@@ -97,5 +98,6 @@ async function orderFromPaidStripeSession(
     items,
   };
 
-  return createHubOrderPayload(body, externalId, "paid_externally");
+  const menu = await readMenu();
+  return createHubOrderPayload(body, externalId, "paid_externally", menu);
 }

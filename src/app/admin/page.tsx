@@ -294,7 +294,13 @@ export default function AdminPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ inStock: !item.inStock }),
     });
-    if (res.ok) await fetchMenu();
+    if (res.ok) {
+      await fetchMenu();
+      show(!item.inStock ? "Produit remis en stock" : "Produit marqué épuisé");
+    } else {
+      const json = await res.json().catch(() => null) as { error?: string } | null;
+      show(json?.error ?? "Erreur stock", "err");
+    }
   }
 
   const categories = ["Tout", ...CATEGORIES];

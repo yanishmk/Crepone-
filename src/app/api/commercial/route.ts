@@ -18,20 +18,58 @@ export async function GET(req: Request) {
   }
 
   const days = new URL(req.url).searchParams.get("days") || "30";
-  const hubRes = await fetch(`${HUB_URL}/analytics?days=${encodeURIComponent(days)}`, {
-    headers: { "x-api-key": HUB_ADMIN_API_KEY },
-    cache: "no-store",
-  });
-  const text = await hubRes.text();
-  if (!hubRes.ok) {
+  const hubBaseUrl = normalizeHubUrl(HUB_URL);
+  if (!hubBaseUrl) {
     return NextResponse.json(
-      { error: "Le hub commercial a refuse la requete", details: text },
-      { status: hubRes.status }
+      { error: "CLUSTER_HUB_URL est invalide", details: "Utilise une URL publique qui commence par https:// et finit sans /analytics" },
+      { status: 500 }
     );
   }
 
-  return new NextResponse(text, {
-    status: 200,
-    headers: { "content-type": "application/json" },
-  });
+  const analyticsUrl = `${hubBaseUrl}/analytics?days=${encodeURIComponent(days)}`;
+  try {
+    const hubRes = await fetch(analyticsUrl, {
+      headers: { "x-api-key": HUB_ADMIN_API_KEY },
+      cache: "no-store",
+    });
+    const text = await hubRes.text();
+    if (!hubRes.ok) {
+      return NextResponse.json(
+        {
+          error: "Le hub commercial a refuse la requete",
+          details: `${hubRes.status} ${text.slice(0, 500)}`,
+          hubUrl: analyticsUrl,
+        },
+        { status: hubRes.status }
+      );
+    }
+
+    return new NextResponse(text, {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  } catch (err) {
+    return NextResponse.json(
+      {
+        error: "Impossible de joindre le hub commercial",
+        details: err instanceof Error ? err.message : String(err),
+        hubUrl: analyticsUrl,
+      },
+      { status: 502 }
+    );
+  }
+}
+
+function normalizeHubUrl(value: string): string | null {
+  const trimmed = value.trim().replace(/^["']|["']$/g, "").replace(/\/+$/, "");
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol !== "https:" && process.env.NODE_ENV === "production") return null;
+    url.pathname = url.pathname.replace(/\/(analytics|health)$/, "");
+    url.search = "";
+    url.hash = "";
+    return url.toString().replace(/\/+$/, "");
+  } catch {
+    return null;
+  }
 }

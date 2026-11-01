@@ -231,7 +231,7 @@ section{padding-block:clamp(72px,10vw,130px)}
 .grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .cursor{position:fixed;left:0;top:0;width:42px;height:42px;margin:-21px 0 0 -21px;border:1.5px solid var(--gold);border-radius:50%;pointer-events:none;z-index:100;transition:width .25s,height .25s,margin .25s,background .25s}
 .cursor.big{width:82px;height:82px;margin:-41px 0 0 -41px;background:rgba(245,197,24,.16)}
-@media (hover:none){.cursor,}
+@media (hover:none){.cursor{display:none}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cursor{display:none}.seal svg,.status.open i{animation:none}}
 
 /* ---------- intégration Next.js ---------- */
